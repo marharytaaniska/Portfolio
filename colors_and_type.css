@@ -1,0 +1,148 @@
+/* ============================================================
+   Marga Anisko Portfolio — Foundations
+   Single-page designer portfolio. Quiet, editorial palette
+   built around deep navy ink (#0D1E2C) on white with one
+   single saturated accent (#FF1D1D) — used for the avatar
+   ring AND the "live" indicator dot.
+   ============================================================ */
+
+/* Inter Tight ships locally as a single variable file (one weight axis, 100-900). */
+@font-face {
+  font-family: "Inter Tight";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("fonts/InterTight-VariableFont_wght.ttf") format("truetype-variations"),
+       url("fonts/InterTight-VariableFont_wght.ttf") format("truetype");
+}
+/* Inter (body) also ships locally as a variable file (optical-size + weight axes). */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("fonts/Inter-VariableFont_opsz_wght.ttf") format("truetype-variations"),
+       url("fonts/Inter-VariableFont_opsz_wght.ttf") format("truetype");
+}
+
+:root {
+  /* ---------- Color tokens (raw) ---------- */
+  --ink-900: rgb(13, 30, 44);          /* primary text, primary button bg */
+  --ink-800: rgb(26, 54, 76);          /* pressed primary button */
+  --ink-600: rgb(79, 92, 101);         /* body copy / paragraphs */
+  --ink-400: rgb(140, 150, 157);       /* tags, meta, secondary copy */
+  --ink-300: rgb(168, 177, 183);       /* inactive segment, disabled label */
+  --ink-200: rgb(225, 225, 225);       /* borders, dividers (dashed + solid) */
+  --ink-100: rgb(245, 245, 246);       /* card fills, image placeholders, disabled bg */
+  --white:   rgb(255, 255, 255);
+
+  --accent:        rgb(255, 29, 29);   /* THE brand accent — avatar ring + live indicator dot */
+  --accent-30:     rgba(255, 29, 29, 0.30); /* 30 % halo around the avatar */
+  --accent-purple: rgb(151, 71, 255);  /* design-only dashed wireframe markers */
+
+  /* ---------- Semantic colors ---------- */
+  --fg:         var(--ink-900);
+  --fg-muted:   var(--ink-600);
+  --fg-subtle:  var(--ink-400);
+  --fg-faint:   var(--ink-300);
+  --fg-invert:  var(--white);
+
+  --bg:         var(--white);
+  --bg-soft:    var(--ink-100);
+  --border:     var(--ink-200);
+
+  --indicator:  var(--accent);
+  /* (--accent itself is declared in raw tokens above; same value serves as semantic accent.) */
+
+  /* ---------- Type family ---------- */
+  --font-display: "Inter Tight", "Inter", system-ui, -apple-system, sans-serif;
+  --font-body:    "Inter", system-ui, -apple-system, sans-serif;
+
+  /* ---------- Type scale (matches Figma) ---------- */
+  --t-display:   48px / 56px var(--font-display);   /* H1 / section header — weight 500 */
+  --t-h2:        30px / 56px var(--font-display);   /* Headline / sub-section header — weight 400 (line-height 56 on desktop & tablet) */
+  --t-h3:        24px / 28px var(--font-display);   /* card title / position — weight 400 */
+  --t-body-lg:   20px / 28px var(--font-body);      /* hero subtitle, nav labels */
+  --t-body:      18px / 26px var(--font-body);      /* main body — paragraphs, reviews, positions */
+  --t-meta:      16px / 24px var(--font-body);      /* meta, tags, year, footnotes */
+  --t-button-lg: 20px / 28px var(--font-body);      /* button / nav label — weight 500 */
+
+  /* ---------- Spacing scale (px, derived from the Figma layout) ---------- */
+  --s-4:   4px;
+  --s-8:   8px;
+  --s-12:  12px;
+  --s-16:  16px;
+  --s-24:  24px;
+  --s-32:  32px;
+  --s-48:  48px;
+  --s-64:  64px;
+  --s-128: 128px;
+
+  /* ---------- Radii ---------- */
+  --r-pill:  9999px;   /* every interactive surface (buttons, chips, switch, avatar) */
+  --r-card:  0;        /* cards have no radius — square edges */
+  --r-circle: 50%;
+
+  /* ---------- Shadows ---------- */
+  --shadow-segment: 0 2px 4px rgba(0, 0, 0, 0.05);  /* segmented active thumb */
+
+  /* ---------- Layout ---------- */
+  --content-max: 1360px;
+  --rail-w: 320px;     /* fixed left nav rail width */
+  --header-h: 80px;
+}
+
+/* ============================================================
+   Semantic element styles — drop into any page to inherit voice
+   ============================================================ */
+html, body {
+  background: var(--bg);
+  color: var(--fg);
+  font: 400 16px/24px var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, .h1 {
+  font: 500 48px/56px var(--font-display);
+  color: var(--fg);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+h2, .h2 {
+  font: 400 30px/56px var(--font-display);
+  color: var(--fg);
+  margin: 0;
+}
+
+h3, .h3 {
+  font: 400 24px/28px var(--font-display);
+  color: var(--fg);
+  margin: 0;
+}
+
+p, .body {
+  font: 400 18px/26px var(--font-body);
+  color: var(--fg-muted);
+  margin: 0;
+}
+
+.body-lg {
+  font: 400 20px/28px var(--font-body);
+  color: var(--fg-muted);
+  margin: 0;
+}
+
+.meta {
+  font: 400 16px/24px var(--font-body);
+  color: var(--fg-subtle);
+}
+
+a, .link {
+  color: var(--fg-muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+  cursor: pointer;
+}
+a:hover, .link:hover { color: var(--fg); }

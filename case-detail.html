@@ -1,0 +1,726 @@
+﻿<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cointraffic — Ads platform · Маргарита Анисько</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: var(--white);
+      color: var(--ink-900);
+      font: 400 16px/24px var(--font-body);
+    }
+
+    /* ============================================================
+       Page shell — identical to ui_kits/portfolio/index.html so the
+       header, side rail, and mobile menu behave exactly the same way.
+       Only the content block changes. Keeping these rules in sync
+       (rather than @import-ing) lets the two pages stay independent.
+       ============================================================ */
+    main {
+      margin-left: var(--rail-w);
+      padding-top: var(--header-h);
+    }
+    .side-rail {
+      position: fixed;
+      left: 0;
+      top: var(--header-h);
+      bottom: 0;
+      width: var(--rail-w);
+      border-right: 1px solid var(--border);
+      padding: 48px 32px 0 32px;
+      background: var(--white);
+      z-index: 40;
+      box-sizing: border-box;
+    }
+    .side-rail-nav { display: flex; flex-direction: column; gap: 24px; }
+    .side-rail-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 48px;
+      padding: 10px 0;
+      text-decoration: none;
+      color: var(--ink-300);
+      font: 500 20px/28px var(--font-body);
+      cursor: pointer;
+      transition: color .15s ease;
+      flex-shrink: 0;
+    }
+    .side-rail-item.is-active { color: var(--ink-900); }
+    .side-rail-item:not(.is-active):hover { color: var(--ink-900); }
+
+    /* Same content shell rules as index.html — 1360 column at ≥1920,
+       1056 between 1440 and 1920, 24-px gutters at the smallest desktop. */
+    .content {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 128px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 128px;
+    }
+    @media (max-width: 1919px) {
+      .content { max-width: 1056px; padding: 64px 32px; gap: 96px; }
+    }
+    @media (max-width: 1439px) {
+      .content { padding: 48px 24px; gap: 80px; }
+    }
+
+    .section { display: flex; flex-direction: column; gap: 48px; }
+    .section-heading h1, .section-heading h2.title {
+      font: 500 48px/48px var(--font-display);
+      color: var(--ink-900);
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+    /* Bare .title (used by the shared Контакты section) inherits line-height
+       36 from colors_and_type.css's h2 rule so it matches the home page on
+       desktop+tablet. Mobile is forced to 28/36 in the @media block below. */
+    .divider-solid {
+      height: 1px;
+      background: var(--border);
+      border: none;
+      margin: 0;
+    }
+    .divider-dashed {
+      height: 0;
+      border: none;
+      border-top: 1px dashed var(--border);
+      margin: 0;
+    }
+    a.inline-link {
+      color: var(--ink-600);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      transition: color .15s ease;
+    }
+    a.inline-link:hover { color: var(--accent); }
+
+    /* Contacts block — copied from main page so the home component renders consistently */
+    .contacts-grid {
+      display: grid;
+      grid-template-columns: 886fr 411fr;
+      gap: 64px;
+    }
+    .contacts-buttons {
+      display: inline-flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 32px;
+    }
+    .contacts-links {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    /* ============================================================
+       MENU OVERLAY — same drawer behavior as home.
+       ============================================================ */
+    .menu-overlay { position: fixed; inset: 0; z-index: 55; pointer-events: none; }
+    .menu-backdrop {
+      position: absolute; inset: 0;
+      background: rgba(13, 30, 44, 0.3);
+      pointer-events: auto;
+      animation: menuFade 160ms ease-out;
+    }
+    @keyframes menuFade { from { opacity: 0; } to { opacity: 1; } }
+    .menu-panel {
+      position: absolute;
+      background: var(--white);
+      pointer-events: auto;
+      top: calc(var(--header-h) + 16px);
+      right: 32px;
+      width: 250px;
+      border-radius: 16px;
+      box-shadow: 0 16px 40px -8px rgba(13, 30, 44, 0.16),
+                  0 2px 6px rgba(13, 30, 44, 0.06);
+      animation: menuPop 180ms cubic-bezier(.2,.7,.2,1);
+    }
+    @keyframes menuPop {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .menu-panel-inner { padding: 32px; display: flex; flex-direction: column; gap: 24px; }
+    .menu-items { display: flex; flex-direction: column; gap: 20px; }
+    .menu-item {
+      display: inline-flex; align-items: center; gap: 8px;
+      text-decoration: none; color: var(--ink-300);
+      font: 500 20px/28px var(--font-body);
+      cursor: pointer; transition: color .15s ease;
+    }
+    .menu-item.is-active { color: var(--ink-900); }
+    .menu-item:not(.is-active):hover { color: var(--ink-900); }
+    .menu-divider { height: 1px; background: var(--border); border: none; margin: 0; }
+    .menu-cta-block { display: none; flex-direction: column; gap: 20px; }
+    .menu-cta-row { display: flex; gap: 16px; }
+
+    /* ============================================================
+       CASE-DETAIL specific styles
+       ============================================================ */
+
+    /* Whole-case shell — case content + final button stacked at gap 64,
+       then a solid divider, then Контакты. Mirrors the Figma node order. */
+    .case-page {
+      display: flex;
+      flex-direction: column;
+      gap: 128px;
+    }
+    @media (max-width: 1919px) { .case-page { gap: 96px; } }
+    @media (max-width: 1023px) { .case-page { gap: 64px; } }
+    @media (max-width: 727px)  { .case-page { gap: 48px; } }
+
+    /* The case-content flow itself — every modular block stacks at 64 px.
+       Tablet keeps the 64 rhythm so spacing between images stays consistent;
+       Mobile collapses to 32 per the Figma. */
+    .case-content {
+      display: flex;
+      flex-direction: column;
+      gap: 64px;
+    }
+    @media (max-width: 727px)  { .case-content { gap: 32px; } }
+
+    /* Hero — title + description column ≤ 1100 px wide */
+    .case-hero {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      max-width: 1100px;
+    }
+    .case-hero-title {
+      margin: 0;
+      font: 500 48px/56px var(--font-display);
+      color: var(--ink-900);
+      letter-spacing: -0.01em;
+    }
+    .case-hero-desc {
+      margin: 0;
+      font: 400 20px/28px var(--font-body);
+      color: var(--ink-600);
+    }
+    @media (max-width: 727px) {
+      .case-hero { gap: 24px; }
+      .case-hero-title { font-size: 28px; line-height: 36px; }
+      .case-hero-desc { font: 400 14px/22px var(--font-body); }
+    }
+
+    /* Summary row — 4 equal cells with vertical dashed dividers between.
+       Per spec: 32px between each value and the divider on either side, so the
+       grid gap is 64px and the divider sits centered (right: -32px). */
+    .case-summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 64px;
+      align-items: stretch;
+      position: relative;
+    }
+    .case-summary-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      justify-content: flex-start;
+      min-width: 0;
+    }
+    .case-summary-tag {
+      font: 400 18px/26px var(--font-body);
+      color: var(--ink-400);
+    }
+    .case-summary-value {
+      font: 400 18px/26px var(--font-body);
+      color: var(--ink-900);
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    /* Dashed vertical separators between cells.
+       We render them as ::after on every cell except the last, centered in the 64px gap. */
+    .case-summary-cell:not(:last-child) {
+      position: relative;
+    }
+    .case-summary-cell:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: -32px;
+      width: 0;
+      border-left: 1px dashed var(--border);
+    }
+    .case-summary-sep { display: none; } /* JSX scaffolding placeholder, dividers are CSS */
+
+    /* Below 1024 — stack into a single column with horizontal DASHED dividers
+       (dash 4 / gap 4, rendered via a 1px background gradient so the dash
+       length is identical to the desktop summary cell dividers and to
+       .divider-dashed elsewhere on the site).
+       Per spec: 32 px between each value and the divider (top + bottom).
+       Mobile shrinks that to 24 px. */
+    @media (max-width: 1023px) {
+      .case-summary { grid-template-columns: 1fr; gap: 32px; }
+      .case-summary-cell::after { display: none !important; }
+      .case-summary-cell:not(:first-child) {
+        border-top: none;
+        background:
+          linear-gradient(to right, var(--border) 50%, transparent 50%)
+          top left / 8px 1px repeat-x;
+        padding-top: 32px;
+      }
+    }
+    /* Mobile — same stacked layout, slightly smaller type, 24 px rhythm. */
+    @media (max-width: 727px) {
+      .case-summary { gap: 24px; }
+      .case-summary-cell:not(:first-child) { padding-top: 24px; }
+      .case-summary-tag, .case-summary-value {
+        font: 400 14px/22px var(--font-body);
+      }
+    }
+
+    /* Image frames — flat #F5F5F6 swatches. Aspect ratios come from the Figma. */
+    .case-img-single, .case-img-double { margin: 0; }
+    .case-img-frame {
+      width: 100%;
+      background: var(--ink-100);
+      position: relative;
+      overflow: hidden;
+    }
+    .case-img-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font: 400 13px/20px ui-monospace, Menlo, monospace;
+      color: var(--ink-300);
+      letter-spacing: 0.02em;
+    }
+    .case-img-double {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+    }
+    @media (max-width: 1023px) {
+      .case-img-double { grid-template-columns: 1fr; gap: 64px; }
+      /* On tablet/mobile the Figma uses near-square double-image swatches.
+         Drop the desktop 648/365 (~1.78) override here for stacked rows. */
+      .case-img-double .case-img-frame { aspect-ratio: 1360 / 766 !important; }
+    }
+    @media (max-width: 727px) {
+      .case-img-double { gap: 32px; }
+    }
+
+    /* Text blocks — Title + N Description and N Description.
+       Per Figma: Title (Inter Tight 30/36 regular) + descriptions
+       stacked at 24 gap. The whole block lives in a 1100-px sub-column. */
+    .case-text-block {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      max-width: 1100px;
+    }
+    .case-block-title {
+      margin: 0;
+      font: 400 30px/36px var(--font-display);
+      color: var(--ink-900);
+    }
+    .case-block-descriptions {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    @media (max-width: 727px) {
+      .case-block-title { font: 400 20px/28px var(--font-display); }
+      .case-text-block { gap: 16px; }
+      .case-block-descriptions { gap: 16px; }
+    }
+
+    /* Generic rich body — every paragraph that should accept the
+       bold + link rich-text grammar. Default = 18/26 ink-600. */
+    .case-text {
+      margin: 0;
+      font: 400 18px/26px var(--font-body);
+      color: var(--ink-600);
+    }
+    .case-hero-desc.case-text {
+      font: 400 20px/28px var(--font-body);
+      color: var(--ink-600);
+    }
+    /* Rich grammar — inside any .case-text block. */
+    .case-text strong, .case-text b {
+      font-weight: 500;
+      color: var(--ink-900);
+    }
+    .case-text a {
+      color: inherit;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      transition: color .15s ease;
+    }
+    .case-text a:hover { color: var(--accent); }
+    @media (max-width: 727px) {
+      .case-text { font: 400 13px/20px var(--font-body); }
+      .case-hero-desc.case-text { font: 400 14px/22px var(--font-body); }
+    }
+
+    /* Trailing visit-website button — sits at the bottom of case content,
+       above the solid divider, left-aligned. */
+    .case-cta { align-self: flex-start; }
+    @media (max-width: 727px) {
+      .case-cta { align-self: stretch; }
+      .case-cta > * {
+        width: 100% !important;
+        height: 48px !important;
+        font: 500 14px/22px var(--font-body) !important;
+      }
+    }
+
+    /* ============================================================
+       TABLET — viewport ≤ 1023 px
+       Same shape as the home page: drop the rail, show the hamburger.
+       ============================================================ */
+    @media (max-width: 1023px) {
+      main { margin-left: 0; padding-top: var(--header-h); }
+      .side-rail { display: none; }
+      .header-lang-switch, .header-divider { display: none !important; }
+      .header-menu-btn { display: inline-flex !important; }
+      .content { max-width: 100%; padding: 64px 32px; gap: 80px; }
+      .contacts-grid { grid-template-columns: 1fr; gap: 48px; }
+      .menu-lang { width: 100%; }
+      .menu-lang .lang-switch {
+        width: 100% !important;
+        justify-content: stretch !important;
+      }
+      .menu-lang .lang-switch-seg {
+        flex: 1 !important;
+        width: auto !important;
+      }
+    }
+
+    /* ============================================================
+       MOBILE — viewport ≤ 727 px
+       Mirror the home page's mobile header (no CTAs in the bar; they
+       move into the menu sheet) + size-down type ramp.
+       ============================================================ */
+    @media (max-width: 727px) {
+      .content { padding: 32px 24px; gap: 48px; }
+      .section { gap: 32px; }
+      :root { --header-h: 64px; }
+
+      .header-time, .header-tz {
+        font: 500 14px/22px var(--font-body) !important;
+        width: auto !important;
+      }
+      .site-header { padding: 0 24px !important; }
+      .header-buttons { display: none !important; }
+
+      .menu-backdrop { display: none; }
+      .menu-panel {
+        top: var(--header-h);
+        right: 0; left: 0; bottom: 0;
+        width: auto;
+        border-radius: 0;
+        box-shadow: none;
+        animation: menuSlide 200ms cubic-bezier(.2,.7,.2,1);
+        display: flex;
+        flex-direction: column;
+      }
+      @keyframes menuSlide {
+        from { opacity: 0; transform: translateY(-12px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      .menu-panel-inner {
+        padding: 24px; gap: 32px; flex: 1;
+        justify-content: space-between;
+      }
+      .menu-items { gap: 20px; }
+      .menu-cta-block { display: flex; }
+      .menu-lang { display: flex; justify-content: stretch; }
+      .menu-lang > * { width: 100%; }
+      .menu-item { font: 500 14px/22px var(--font-body) !important; min-height: 32px; }
+      .menu-lang .lang-switch-seg { font: 500 14px/22px var(--font-body) !important; }
+
+      /* Contacts on mobile — buttons full-width, stacked */
+      .title, .section-heading h2.title {
+        font: 500 28px/36px var(--font-display) !important;
+        letter-spacing: -0.01em;
+      }
+      #Контакты.section { gap: 24px !important; }
+      #Контакты p[style*="24px 0 0"] { margin-top: 20px !important; }
+      #Контакты .contacts-buttons {
+        display: flex !important;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        margin-top: 24px !important;
+      }
+      #Контакты .contacts-buttons > * {
+        width: 100% !important;
+        height: 48px !important;
+        font: 500 14px/22px var(--font-body) !important;
+      }
+      #Контакты p:not([style*="24px 0 0"]) {
+        font: 400 13px/20px var(--font-body) !important;
+      }
+      #Контакты p[style*="24px 0 0"] {
+        font: 400 13px/20px var(--font-body) !important;
+      }
+
+      /* Linked In / Telegram-канал / Threads — inline-underline buttons.
+         On home page mobile, every text-accent Button drops from 18/26 to 14/22.
+         Match that behaviour here so Контакты is identical across pages. */
+      main button[style*="text-decoration: underline"][style*="18px/26px"],
+      main a[style*="text-decoration: underline"][style*="18px/26px"] {
+        font: 400 14px/22px var(--font-body) !important;
+      }
+    }
+  </style>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body data-screen-label="Case detail">
+  <div id="root"></div>
+
+  <!-- Same components as the main page — header + side nav + menu -->
+  <script type="text/babel" src="components/Button.jsx"></script>
+  <script type="text/babel" src="components/Switch.jsx"></script>
+  <script type="text/babel" src="components/Header.jsx"></script>
+  <script type="text/babel" src="components/SideNav.jsx"></script>
+  <script type="text/babel" src="components/MenuOverlay.jsx"></script>
+  <script type="text/babel" src="components/Contacts.jsx"></script>
+  <!-- Case-detail-specific building blocks -->
+  <script type="text/babel" src="components/CaseBlocks.jsx"></script>
+
+  <script type="text/babel">
+    function App() {
+      const [menuOpen, setMenuOpen] = React.useState(false);
+      const [lang, setLang] = React.useState("RU");
+
+      // On the case-detail page, the nav rail anchors don't scroll within
+      // the page — they navigate back to the corresponding section on the
+      // home page. No item is shown as active: the case-detail view is its
+      // own context, not a sub-state of any home section.
+      const navigateHome = (section) => {
+        window.location.href = `index.html#${section}`;
+      };
+
+      // Close the menu when the viewport grows past tablet
+      React.useEffect(() => {
+        const mql = window.matchMedia("(min-width: 1024px)");
+        const onChange = (e) => { if (e.matches) setMenuOpen(false); };
+        mql.addEventListener("change", onChange);
+        return () => mql.removeEventListener("change", onChange);
+      }, []);
+
+      return (
+        <>
+          <Header menuOpen={menuOpen} onMenuToggle={() => setMenuOpen((v) => !v)} />
+          <SideNav active={null} onSelect={navigateHome} />
+          <MenuOverlay
+            open={menuOpen}
+            onClose={() => setMenuOpen(false)}
+            active={null}
+            onSelect={navigateHome}
+            lang={lang}
+            onLangChange={setLang}
+          />
+
+          <main>
+            <div className="content">
+              <div className="case-page">
+
+                <div className="case-content">
+                  {/* ───────────────────────────── Title + description */}
+                  <CaseHero
+                    title="Cointraffic — Ads platform"
+                    description={
+                      <>
+                        Спроектировала ребрендинг и интерфейс <strong>рекламной платформы</strong> для крипто-индустрии:
+                        от исследования и аудита до дизайн-системы и handoff. Запустила{" "}
+                        <a href="#">три продукта</a> на общей библиотеке компонентов, ускорив выпуск
+                        новых фичей в полтора раза.
+                      </>
+                    }
+                  />
+
+                  {/* ───────────────────────────── Summary (Client / Services / Industries / Date) */}
+                  <CaseSummary items={[
+                    { label: "Client", value: "Cointraffic, Эстония" },
+                    { label: "Services", value: ["Branding", "Web Design", "Design System"] },
+                    { label: "Industries", value: "Ad-tech, Crypto" },
+                    { label: "Date", value: "2025 – 2026" },
+                  ]} />
+
+                  {/* ───────────────────────────── Single image — cover */}
+                  <CaseSingleImage placeholder="cover · 1360 × 765" />
+
+                  <CaseDivider kind="dashed" />
+
+                  {/* ───────────────────────────── Title + 2 Description */}
+                  <CaseText
+                    title="Контекст и задача"
+                    descriptions={[
+                      <>
+                        Cointraffic — <strong>ad-network для криптопроектов</strong> с офисами в Эстонии и более чем 8 лет на рынке.
+                        К моменту, когда я подключилась, интерфейс отставал от продукта: разные паттерны в каждом разделе,
+                        no design tokens, у инженеров не было единой библиотеки. Подробнее о компании можно почитать{" "}
+                        <a href="#">в их блоге</a>.
+                      </>,
+                      <>
+                        Задача — перепроектировать <strong>три продукта</strong> (Advertisers, Publishers, Ad-Server) на общей дизайн-системе,
+                        внедрить узнаваемый изометрический fancy-стиль и настроить прозрачный handoff с описанием логики и edge-кейсов.
+                      </>,
+                    ]}
+                  />
+
+                  {/* ───────────────────────────── Double image */}
+                  <CaseDoubleImage items={[
+                    { alt: "Старый интерфейс — before" },
+                    { alt: "Новый интерфейс — after" },
+                  ]} />
+
+                  {/* ───────────────────────────── Description */}
+                  <CaseText
+                    descriptions={[
+                      <>
+                        До редизайна метрики Time-to-First-Campaign были на уровне <strong>9 дней</strong>: новые рекламодатели
+                        терялись в onboarding'е, не находили kpi-репорты и не понимали разницу между типами кампаний.
+                      </>,
+                    ]}
+                  />
+
+                  {/* ───────────────────────────── Single image */}
+                  <CaseSingleImage placeholder="screen · onboarding flow" />
+
+                  {/* ───────────────────────────── Description */}
+                  <CaseText
+                    descriptions={[
+                      <>
+                        Перепроектировала onboarding как трёхшаговый wizard с активным предпросмотром:
+                        Time-to-First-Campaign сократился до <strong>2 дней</strong>, конверсия из регистрации в
+                        первый запуск выросла в <a href="#">1.5×</a> за первые две недели.
+                      </>,
+                    ]}
+                  />
+
+                  <CaseDivider kind="dashed" />
+
+                  {/* ───────────────────────────── Title + Description */}
+                  <CaseText
+                    title="Дизайн-система"
+                    descriptions={[
+                      <>
+                        Спроектировала <strong>атомарную дизайн-систему</strong> на 200+ компонентов: токены цвета, типографики,
+                        радиусов и теней; primitives, controls, layouts. Документация — в Notion, исходники — в Figma,
+                        handoff — в Storybook. Подробнее — <a href="#">в этой статье</a>.
+                      </>,
+                    ]}
+                  />
+
+                  {/* ───────────────────────────── Single image */}
+                  <CaseSingleImage placeholder="design system · components grid" />
+
+                  {/* ───────────────────────────── Double image */}
+                  <CaseDoubleImage items={[
+                    { alt: "Цветовые токены" },
+                    { alt: "Типографическая сетка" },
+                  ]} />
+
+                  {/* ───────────────────────────── 4 Description */}
+                  <CaseText
+                    descriptions={[
+                      <>
+                        <strong>Скорость.</strong> Выпуск новых интерфейсных задач ускорился в 1.7× — за счёт того, что инженеры
+                        собирают экраны из готовых компонентов, а не верстают каждый раз заново.
+                      </>,
+                      <>
+                        <strong>Консистентность.</strong> Все три продукта говорят одним визуальным языком — пользователь, переходящий
+                        между Advertisers и Publishers, не замечает швов.
+                      </>,
+                      <>
+                        <strong>Доступность.</strong> Контрастность всех текстовых пар проверена по WCAG AA. Focus-стили,
+                        keyboard-навигация и aria-роли — часть базовой спецификации компонента.
+                      </>,
+                      <>
+                        <strong>Масштабируемость.</strong> Новые продукты внутри компании (внутренние дашборды, CRM) теперь
+                        собираются на той же библиотеке. Подключение нового продукта — 1 спринт вместо 2 месяцев.
+                      </>,
+                    ]}
+                  />
+
+                  <CaseDivider kind="dashed" />
+
+                  {/* ───────────────────────────── Title + Description */}
+                  <CaseText
+                    title="Графика и фирменный стиль"
+                    descriptions={[
+                      <>
+                        Создала <strong>узнаваемый изометрический fancy-стиль</strong>: иллюстрации, иконки, графика для
+                        промо-страниц и социальных сетей. Стиль работает и в продукте, и в маркетинге.
+                      </>,
+                    ]}
+                  />
+
+                  {/* ───────────────────────────── Single image */}
+                  <CaseSingleImage placeholder="isometric illustrations · hero" />
+
+                  {/* ───────────────────────────── Double image */}
+                  <CaseDoubleImage items={[
+                    { alt: "Промо-страница продукта" },
+                    { alt: "Соцсети — пост" },
+                  ]} />
+
+                  {/* ───────────────────────────── 2 Description */}
+                  <CaseText
+                    descriptions={[
+                      <>
+                        Итог: <strong>трёхгодовая визуальная стратегия</strong>, по которой команда продолжает работать сегодня.
+                        Бренд узнаваем на конференциях, в рассылках и на лендингах партнёров.
+                      </>,
+                      <>
+                        Я по-прежнему сопровождаю изменения дизайн-системы и провожу ревью макетов — раз в две недели,
+                        чтобы помочь команде расти.
+                      </>,
+                    ]}
+                  />
+
+                  {/* ───────────────────────────── Description */}
+                  <CaseText
+                    descriptions={[
+                      <>
+                        <a href="#">Ссылка на лайв-версию платформы →</a>
+                      </>,
+                    ]}
+                  />
+
+                  {/* ───────────────────────────── Visit website button */}
+                  <div className="case-cta">
+                    <Button accent="secondary" size="lg">
+                      Visit website
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
+                        <path d="M6 14L14 6M14 6H7M14 6V13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </Button>
+                  </div>
+                </div>
+
+                <hr className="divider-solid" />
+
+                {/* ───────────────────────────── Контакты — shared with home */}
+                <Contacts />
+
+              </div>
+            </div>
+          </main>
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
+

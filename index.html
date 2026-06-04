@@ -1,0 +1,1209 @@
+﻿<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Маргарита Анисько — Продуктовый и UX/UI дизайнер</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    html { scroll-padding-top: var(--header-h); }
+    body {
+      background: var(--white);
+      color: var(--ink-900);
+      font: 400 16px/24px var(--font-body);
+    }
+    /* Main two-column shell: fixed 320 rail + flexible content. */
+    main {
+      margin-left: var(--rail-w);
+      padding-top: var(--header-h);
+    }
+
+    /* ============================================================
+       Side rail — desktop (≥1024): fixed 320 px vertical column.
+       Below 1024 px it flips to a horizontal sticky strip (see media).
+       ============================================================ */
+    .side-rail {
+      position: fixed;
+      left: 0;
+      top: var(--header-h);
+      bottom: 0;
+      width: var(--rail-w);
+      border-right: 1px solid var(--border);
+      padding: 48px 32px 0 32px;
+      background: var(--white);
+      z-index: 40;
+      box-sizing: border-box;
+    }
+    .side-rail-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .side-rail-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 48px;
+      padding: 10px 0;
+      text-decoration: none;
+      color: var(--ink-300);
+      font: 500 20px/28px var(--font-body);
+      cursor: pointer;
+      transition: color .15s ease;
+      flex-shrink: 0;
+    }
+    .side-rail-item.is-active { color: var(--ink-900); }
+    .side-rail-item:not(.is-active):hover { color: var(--ink-900); }
+
+    /* Three breakpoints mirror the Figma frames: 1440 / 1920 / 2560.
+       The content column itself is either 1056 (≤1919) or 1360 (≥1920) wide.
+       Vertical padding tightens at the small breakpoint (128 → 64). */
+    .content {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 128px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 128px;
+    }
+    @media (max-width: 1919px) {
+      .content { max-width: 1056px; padding: 64px 32px; gap: 96px; }
+    }
+    @media (max-width: 1439px) {
+      .content { padding: 48px 24px; gap: 80px; }
+    }
+    .section { display: flex; flex-direction: column; gap: 48px; }
+    .section-heading h1, .section-heading h2.title {
+      font: 500 48px/48px var(--font-display);
+      color: var(--ink-900);
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+    .divider-solid {
+      height: 1px;
+      background: var(--border);
+      border: none;
+      margin: 0;
+    }
+    .divider-dashed {
+      height: 0;
+      border: none;
+      border-top: 1px dashed var(--border);
+      margin: 0;
+    }
+    /* Hero */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      align-items: center;
+      text-align: center;
+    }
+    .hero h1 {
+      max-width: 1200px;
+      white-space: pre-line;
+    }
+    .hero p.sub {
+      max-width: 800px;
+      font: 400 20px/28px var(--font-body);
+      color: var(--ink-600);
+      margin: 0;
+    }
+    .hero .ctas {
+      display: inline-flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 32px;
+    }
+    /* Cases */
+    .cases-heading {
+      display: flex;
+      align-items: flex-end;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .cases-tabs {
+      display: inline-flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      /* Tabs container claims remaining horizontal space so the count is
+         pushed to the right edge of the heading. When tabs no longer fit
+         on a single row inside the container, they wrap; the count stays
+         bottom-right thanks to align-items: flex-end on .cases-heading. */
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .cases-count {
+      font: 400 16px/24px var(--font-body);
+      color: var(--ink-400);
+      flex-shrink: 0;
+    }
+    .cases-grid {
+      display: grid;
+      gap: 64px;
+    }
+    .cases-row-two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+    }
+    /* Reviews */
+    .reviews-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .reviews-arrows { display: inline-flex; gap: 8px; }
+    .arrow-btn {
+      all: unset;
+      width: 48px;
+      height: 48px;
+      border-radius: 9999px;
+      border: 1px solid var(--ink-200);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--ink-900);
+      background: var(--white);
+      transition: border-color .15s ease, color .15s ease, opacity .15s ease;
+      box-sizing: border-box;
+    }
+    .arrow-btn:hover:not(:disabled) { border-color: var(--ink-900); }
+    .arrow-btn:disabled { color: var(--ink-200); cursor: not-allowed; }
+    .arrow-btn svg { display: block; }
+    /* Viewport + sliding track */
+    .reviews-viewport { overflow: hidden; }
+    .reviews-track {
+      display: flex;
+      transition: transform .4s cubic-bezier(.2,.6,.2,1);
+    }
+    .reviews-page {
+      flex: 0 0 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .reviews-footer {
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      font: 400 18px/26px var(--font-body);
+      color: var(--ink-600);
+    }
+    /* Plain inline <a> links inside JSX components — match Button accent="text"
+       hover behavior (turn accent-red on hover, ink-600 default with underline). */
+    a.inline-link {
+      color: var(--ink-600);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      transition: color .15s ease;
+    }
+    a.inline-link:hover { color: var(--accent); }
+
+    /* "Читать полностью" — text button under a clamped review quote.
+       Behaves like the system's text button: ink-900 label, underlined,
+       turns accent-red on hover. Left-aligned, sits flush. */
+    .review-readmore {
+      all: unset;
+      align-self: flex-start;
+      cursor: pointer;
+      font: 400 18px/26px var(--font-body);
+      color: var(--ink-900);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      text-decoration-thickness: 1px;
+      transition: color .15s ease;
+    }
+    .review-readmore:hover { color: var(--accent); }
+
+    /* ============================================================
+       REVIEW MODAL — full-text reader, opened from "Читать полностью".
+       Square edges, no shadow, ink scrim + white panel. Quiet 150ms fade.
+       ============================================================ */
+    .review-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .review-modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(13, 30, 44, 0.45);
+      animation: review-fade .15s ease both;
+    }
+    .review-modal-panel {
+      position: relative;
+      width: min(640px, 100%);
+      max-height: calc(100vh - 48px);
+      overflow-y: auto;
+      background: var(--white);
+      padding: 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      animation: review-rise .15s ease both;
+    }
+    .review-modal-close {
+      all: unset;
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink-400);
+      transition: color .15s ease;
+    }
+    .review-modal-close svg { display: block; }
+    .review-modal-close:hover { color: var(--ink-900); }
+    .review-modal-quote {
+      margin: 0 0 48px;
+      font: 400 18px/26px var(--font-body);
+      color: var(--ink-800);
+      text-wrap: pretty;
+    }
+    .review-modal-author {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .review-modal-author h3 {
+      margin: 0 0 12px;
+      font: 400 24px/28px var(--font-display);
+      color: var(--ink-900);
+    }
+    .review-modal-author span {
+      font: 400 16px/24px var(--font-body);
+      color: var(--ink-400);
+    }
+    @keyframes review-fade {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes review-rise {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Background */
+    .bg-grid {
+      display: grid;
+      grid-template-columns: 885fr 411fr;
+      gap: 64px;
+    }
+    .bg-col {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+    /* Experience */
+    .exp-list {
+      display: flex;
+      flex-direction: column;
+      gap: 64px;
+    }
+    /* Contacts */
+    .contacts-grid {
+      display: grid;
+      grid-template-columns: 886fr 411fr;
+      gap: 64px;
+    }
+    .contacts-buttons {
+      display: inline-flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 32px;
+    }
+    .contacts-links {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    /* ============================================================
+       MENU OVERLAY — hamburger-driven drawer for tablet & mobile.
+       Hidden on desktop. The host (App) toggles visibility by
+       mounting / unmounting MenuOverlay.
+       ============================================================ */
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 55;
+      pointer-events: none;
+    }
+    .menu-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(13, 30, 44, 0.3);
+      pointer-events: auto;
+      animation: menuFade 160ms ease-out;
+    }
+    @keyframes menuFade { from { opacity: 0; } to { opacity: 1; } }
+    .menu-panel {
+      position: absolute;
+      background: var(--white);
+      pointer-events: auto;
+      /* Tablet defaults — a 250 px popover floated below the header */
+      top: calc(var(--header-h) + 16px);
+      right: 32px;
+      width: 250px;
+      border-radius: 16px;
+      box-shadow: 0 16px 40px -8px rgba(13, 30, 44, 0.16),
+                  0 2px 6px rgba(13, 30, 44, 0.06);
+      animation: menuPop 180ms cubic-bezier(.2,.7,.2,1);
+    }
+    @keyframes menuPop {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .menu-panel-inner {
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .menu-items {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .menu-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--ink-300);
+      font: 500 20px/28px var(--font-body);
+      cursor: pointer;
+      transition: color .15s ease;
+    }
+    .menu-item.is-active { color: var(--ink-900); }
+    .menu-item:not(.is-active):hover { color: var(--ink-900); }
+    .menu-divider {
+      height: 1px;
+      background: var(--border);
+      border: none;
+      margin: 0;
+    }
+    .menu-cta-block { display: none; flex-direction: column; gap: 20px; }
+    .menu-cta-row { display: flex; gap: 16px; }
+
+    /* ============================================================
+       TABLET — viewport ≤ 1023 px
+       Drop the desktop side rail and the in-header lang switch.
+       Show the hamburger button. Content reclaims full width.
+       Bэкграунд / Контакты grids collapse to a single column.
+       Mirrors /Concept/728-tablet and /Concept/1024-tablet.
+       ============================================================ */
+    @media (max-width: 1023px) {
+      main {
+        margin-left: 0;
+        padding-top: var(--header-h);
+      }
+      .side-rail { display: none; }
+      .header-lang-switch, .header-divider { display: none !important; }
+      .header-menu-btn { display: inline-flex !important; }
+
+      /* Avatar shrinks from 180 → 135 on tablet. Inner rings scale via %. */
+      .avatar { --avatar-size: 135px; }
+
+      .content { max-width: 100%; padding: 64px 32px; gap: 80px; }
+
+      /* Stack the 885/411 layouts */
+      .bg-grid { grid-template-columns: 1fr; gap: 48px; }
+      .contacts-grid { grid-template-columns: 1fr; gap: 48px; }
+      .exp-grid { grid-template-columns: 1fr !important; gap: 48px !important; }
+
+      /* ============================================================
+         Item 3 — language switch fills the menu width on tablet & mobile.
+         (Outer pill goes 100 % wide; the two segments share the row.)
+         ============================================================ */
+      .menu-lang { width: 100%; }
+      .menu-lang .lang-switch {
+        width: 100% !important;
+        justify-content: stretch !important;
+      }
+      .menu-lang .lang-switch-seg {
+        flex: 1 !important;
+        width: auto !important;
+      }
+    }
+
+    /* ============================================================
+       MOBILE — viewport ≤ 727 px
+       Header drops CV / Copy email — they live inside the menu now.
+       Menu panel becomes a fullscreen sheet under the header.
+       Type sizes step down per /Concept/375-mobile.
+       ============================================================ */
+    @media (max-width: 727px) {
+      .content { padding: 32px 24px; gap: 48px; }
+      .section { gap: 32px; }
+
+      /* ============================================================
+         Item 1 — header height shrinks to 64 on mobile.
+         Cascades into main padding-top, side-rail offset, menu top.
+         ============================================================ */
+      :root { --header-h: 64px; }
+
+      /* ============================================================
+         Item 2 — header time + timezone → Inter 500, 14 / 22 px on mobile
+         ============================================================ */
+      .header-time, .header-tz {
+        font: 500 14px/22px var(--font-body) !important;
+        width: auto !important;
+      }
+
+      /* Header — drop the desktop CTAs, hamburger only */
+      .site-header { padding: 0 24px !important; }
+      .header-buttons { display: none !important; }
+
+      /* Menu becomes fullscreen */
+      .menu-backdrop { display: none; }
+      .menu-panel {
+        top: var(--header-h);
+        right: 0;
+        left: 0;
+        bottom: 0;
+        width: auto;
+        border-radius: 0;
+        box-shadow: none;
+        animation: menuSlide 200ms cubic-bezier(.2,.7,.2,1);
+        display: flex;
+        flex-direction: column;
+      }
+      @keyframes menuSlide {
+        from { opacity: 0; transform: translateY(-12px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      .menu-panel-inner {
+        padding: 24px;
+        gap: 32px;
+        flex: 1;
+        justify-content: space-between;
+      }
+      .menu-items { gap: 20px; }
+      .menu-cta-block { display: flex; }
+      .menu-lang { display: flex; justify-content: stretch; }
+      .menu-lang > * { width: 100%; }
+
+      /* Avatar shrinks further on mobile — 100×100 outer. */
+      .avatar { --avatar-size: 100px; }
+
+      /* Hero scales down */
+      .hero { gap: 24px; }
+      .hero h1 { font-size: 28px; line-height: 36px; letter-spacing: -0.01em; }
+      .hero .ctas {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+      }
+      .hero .ctas > * { width: 100% !important; }
+
+      /* All pill buttons on mobile: 48 px tall, 14 px label, full-width edge-to-edge.
+         Button.jsx writes height + font inline, so !important is required.
+         Targets primary / secondary / ghost (md / lg) pills — NOT the underlined
+         inline `text` accent, which lives inside sentences and stays inline. */
+      .hero .ctas > button,
+      .hero .ctas > a,
+      .cases-more > button,
+      .cases-more > a,
+      .contacts-buttons > button,
+      .contacts-buttons > a,
+      .menu-cta-row > button,
+      .menu-cta-row > a {
+        height: 48px !important;
+        width: 100% !important;
+        font: 500 14px/22px var(--font-body) !important;
+      }
+      .cases-more { align-self: stretch; }
+
+      /* ------------------------------------------------------------
+         Mobile body scale per design spec:
+           Body Lg → Inter 400, 14 / 22  (desktop 20 / 28 — hero sub, .body-lg)
+           Body    → Inter 400, 13 / 20  (desktop 18 / 26 — paragraphs, inline copy)
+         Targets both className-based callers and inline `font:` shorthand
+         strings written by JSX components via [style*="…"] selectors. */
+      .hero p.sub,
+      .body-lg,
+      main [style*="20px/28px"]:not(button):not(a) {
+        font: 400 14px/22px var(--font-body) !important;
+      }
+      main p:not(.sub),
+      .body,
+      main [style*="18px/26px"] {
+        font: 400 13px/20px var(--font-body) !important;
+      }
+
+      /* Cases — single column */
+      .cases-row-two { grid-template-columns: 1fr; gap: 32px; }
+      .cases-heading { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .cases-grid { gap: 32px; }
+
+      /* Case card meta — tighter spacing on mobile.
+         Image → title: 16 px. Title → tags row: 8 px.
+         CaseCard.jsx writes margin-top + gap inline, so !important is required. */
+      .case-card-meta {
+        margin-top: 16px !important;
+        gap: 8px !important;
+      }
+
+      /* Tabs (Cases filter chips) on mobile — height 40, label 13/20.
+         Tab.jsx writes height + font inline, so !important is required. */
+      .case-tab {
+        height: 40px !important;
+        font: 500 13px/20px var(--font-body) !important;
+      }
+      /* Tighter spacing between filter chips on mobile (Все · Веб · Мобайл …) */
+      .cases-tabs { gap: 8px; justify-content: center; }
+      /* Center the Cases section header on mobile: title, tabs, count */
+      #Кейсы .section-heading { align-items: center; text-align: center; }
+      #Кейсы .cases-heading { flex-direction: column; justify-content: center; align-items: center; }
+      /* On mobile reset the desktop/tablet count-first reorder so tabs stay above the count. */
+      #Кейсы .cases-count { order: 0; }
+
+      /* Side-nav rail items INSIDE the mobile menu overlay — 14/22.
+         Desktop side-rail items are unaffected (this is the sheet variant). */
+      .menu-item {
+        font: 500 14px/22px var(--font-body) !important;
+      }
+
+      /* Square brand/logo image in PositionHeader — 64 → 48 on mobile. */
+      .position-logo {
+        width: 48px !important;
+        height: 48px !important;
+      }
+
+      /* Reviews — one card per page on mobile only */
+      .reviews-page { grid-template-columns: 1fr; }
+
+      /* Review modal — tighter padding + smaller quote on mobile */
+      .review-modal { padding: 16px; }
+      .review-modal-panel { padding: 32px 24px; gap: 0; }
+      .review-modal-close { top: 16px; right: 16px; }
+      .review-modal-quote { font: 400 14px/22px var(--font-body); margin: 0 0 32px; }
+      .review-modal-author h3 { font: 400 16px/24px var(--font-display); margin: 0 0 8px; }
+      .review-modal-author span { font: 400 13px/20px var(--font-body); }
+      .review-readmore { font: 400 14px/22px var(--font-body); }
+
+      /* Reviews footer note scales down on mobile (desktop/tablet = 18/26). */
+      .reviews-footer { font: 400 14px/22px var(--font-body) !important; }
+
+      /* Mobile layout for #Отзывы:
+         1. title  2. Linked In note  3. cards  4. arrow controls
+         .reviews-heading uses display: contents so its h2 + arrows
+         participate directly in the section's flex column, and we
+         reorder via `order`. */
+      #Отзывы { gap: 24px; }
+      .reviews-heading { display: contents; }
+      .reviews-heading > .title { order: 0; text-align: center; }
+      .reviews-footer {
+        order: 1;
+        display: flex;
+        justify-content: center;
+        text-align: center;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .reviews-viewport { order: 2; }
+      .reviews-arrows {
+        order: 3;
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+      }
+
+      /* Item 4 — tighter padding inside review card (24 vs 32 desktop).
+         The component writes padding inline, so !important is required. */
+      .review-card {
+        padding: 24px !important;
+        gap: 32px !important;
+        min-height: 0 !important;
+      }
+
+      /* ============================================================
+         Item 5 — inline-link style ("Кейс 4", "Linked In", "Посмотреть",
+         "резюме", "+ Показать ещё…") → Inter 400, 14 / 22 on mobile.
+         Targets:
+           a.inline-link  with inline 18/26      (linked cases, footnote link, reviews row)
+           button         with inline underline   (Button accent="text" — always 18/26 now)
+         ============================================================ */
+      main a.inline-link[style*="18px/26px"],
+      main button[style*="text-decoration: underline"][style*="18px/26px"],
+      main a[style*="text-decoration: underline"][style*="18px/26px"] {
+        font: 400 14px/22px var(--font-body) !important;
+      }
+
+      /* ============================================================
+         Item 6 — meta text ("Imedia Solutions, Беларусь", "ноябрь 2022 –
+         январь 2024", "12 проектов", footnotes, course tags) →
+         Inter 400, 13 / 20 on mobile.
+         Targets every non-interactive element with inline 16/24, plus
+         the class-based .cases-count.
+         ============================================================ */
+      main [style*="16px/24px"]:not(button):not(a),
+      .cases-count {
+        font: 400 13px/20px var(--font-body) !important;
+      }
+
+      /* Contacts — buttons stack full-width.
+         Desktop sets `display: inline-flex` on the container, which shrink-wraps
+         to content; we have to switch it to plain flex + width:100% so the
+         button stretch (width:100% on each child) resolves against the section. */
+      .contacts-buttons {
+        display: flex !important;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .contacts-buttons > * { width: 100% !important; }
+
+      /* ------------------------------------------------------------
+         Mobile type scale per design spec:
+           H2 (section titles)               → 28 / 36 medium
+           H3 (subsection — "Вышка", company)→ 20 / 28 regular
+           H4 (card sub-heads, list items)   → 16 / 24 regular
+         Inline `font` shorthand in JSX needs !important to be overridden.
+         ------------------------------------------------------------ */
+      .title,
+      .section-heading h2.title {
+        font: 500 28px/36px var(--font-display) !important;
+        letter-spacing: -0.01em;
+      }
+      main h2:not(.title) {
+        font: 400 20px/28px var(--font-display) !important;
+      }
+      main h3 {
+        font: 400 16px/24px var(--font-display) !important;
+      }
+
+      /* ============================================================
+         Mobile vertical-rhythm overrides (per design spec).
+         All values here are mobile-only.
+         ============================================================ */
+
+      /* --- Бэкграунд ----------------------------------------------
+         H2 → description = 24
+         description → "Вышка" = 32 (= .section gap, already set)
+         end of Вышка col (paragraph) → "Курсы" = 28 (.bg-grid stack gap)
+         Inside each bg-col: H2/PositionHeader/CourseEntry stack on 24,
+         with dashed dividers trimmed to land 20 on each side. */
+      #Бэкграунд > div:first-child { gap: 24px !important; }
+      .bg-grid { gap: 28px !important; }
+      .bg-col { gap: 24px !important; }
+      .bg-col .divider-dashed { margin: -4px 0; }
+
+      /* --- Опыт работы --------------------------------------------
+         Section gap: 32 (override the inline 64).
+         H2 → description = 24.
+         ExperienceEntry vertical layout:
+           PositionHeader → "Обязанности…" block = 28
+           Within left col: H3 → body = 20, body → reviews row = 20
+           Left col → "Связанные кейсы:" (stacked on mobile) = 28
+           Within right col: H3 → first linked case = 20
+         Between consecutive ExperienceEntry items + flanking
+         dashed divider: 32 each side. */
+      #Опыт.section { gap: 32px !important; }
+      #Опыт > div:first-child { gap: 24px !important; }
+      #Опыт .exp-list { gap: 32px !important; }
+      #Опыт .exp-list > div { gap: 28px !important; }
+      #Опыт .exp-grid { gap: 28px !important; }
+      #Опыт .exp-grid > div:first-child { gap: 20px !important; }
+      #Опыт .exp-grid > div:first-child > div:last-child { margin-top: 0 !important; }
+      #Опыт .exp-grid > div:last-child { gap: 20px !important; }
+
+      /* --- Контакты ------------------------------------------------
+         Description (.. ещё быстрее! :)) → footnote (*Не рассматриваю…) = 20
+         Footnote → "Написать в Telegram" button row = 24 */
+      #Контакты p[style*="24px 0 0"] { margin-top: 20px !important; }
+      #Контакты .contacts-buttons { margin-top: 24px !important; }
+
+      /* ============================================================
+         Mobile menu tweaks
+         ============================================================ */
+
+      /* Menu items — 20 px between items (already set on .menu-items),
+         plus 32 px click-target height per spec. Font is set above. */
+      .menu-item { min-height: 32px; }
+
+      /* Language switch labels — Inter 500, 14 / 22 on mobile (per spec).
+         Switch.jsx writes the font inline on each segment button. */
+      .menu-lang .lang-switch-seg {
+        font: 500 14px/22px var(--font-body) !important;
+      }
+
+      /* PositionHeader: tighter logo-to-title gap on mobile (24 → 20).
+         JSX writes gap inline, so !important is required. */
+      .position-header { gap: 20px !important; }
+
+      /* Контакты — H2 → description gap = 24 on mobile (desktop inline = 32) */
+      #Контакты.section { gap: 24px !important; }
+    }
+  </style>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" src="components/Button.jsx"></script>
+  <script type="text/babel" src="components/Avatar.jsx"></script>
+  <script type="text/babel" src="components/Switch.jsx"></script>
+  <script type="text/babel" src="components/Header.jsx"></script>
+  <script type="text/babel" src="components/SideNav.jsx"></script>
+  <script type="text/babel" src="components/MenuOverlay.jsx"></script>
+  <script type="text/babel" src="components/Tab.jsx"></script>
+  <script type="text/babel" src="components/CaseCard.jsx"></script>
+  <script type="text/babel" src="components/ReviewCard.jsx"></script>
+  <script type="text/babel" src="components/ReviewModal.jsx"></script>
+  <script type="text/babel" src="components/ExperienceEntry.jsx"></script>
+  <script type="text/babel" src="components/Contacts.jsx"></script>
+
+  <script type="text/babel">
+
+
+
+
+const CASE_TABS = [
+{ label: "Все" },
+{ label: "Веб" },
+{ label: "Мобайл" },
+{ label: "Брендинг" },
+{ label: "Маркетинг" },
+{ label: "Игры" },
+{ label: "Иллюстрации" },
+{ label: "AI" }];
+
+
+const CASES = [
+{ size: "small", title: "Cointraffic — Ads platform", tags: "Веб, Продукт, Дизайн-система", year: 2026 },
+{ size: "small", title: "Crypto Wallet — приложение", tags: "Мобайл, Финтех", year: 2025 },
+{ size: "big", title: "Dmorpheus — корпоративный сайт", tags: "Веб, Брендинг", year: 2025 },
+{ size: "small", title: "Лендинг для DTC-бренда", tags: "Веб, Маркетинг", year: 2024 },
+{ size: "small", title: "Изометрический стиль", tags: "Иллюстрации, Брендинг", year: 2025 },
+{ size: "big", title: "SaaS CRM — рефакторинг UX", tags: "Веб, Продукт", year: 2024 },
+{ size: "small", title: "Брендбук для студии", tags: "Брендинг", year: 2023 },
+{ size: "small", title: "AI-помощник копирайтера", tags: "AI, Продукт", year: 2024 }];
+
+
+const REVIEWS = [
+{
+  author: "Кирилл",
+  role: "Коллега из Dmorpheus GmbH, проектный менеджер",
+  quote: "Работать с Марго — удовольствие. Она не просто выполняет задачи, а вникает в бизнес и предлагает решения, о которых я сама не думала. Бренд получился цельным и живым — именно таким, каким я его чувствовала, но не могла сформулировать."
+},
+{
+  author: "Александр",
+  role: "Коллега из Cointraffic, руководитель отдела",
+  quote: "Марго сделала лендинг быстрее, чем я ожидал, и без единого вопроса по задаче — она сразу поняла, что нужно. Результат превзошёл ожидания: конверсия выросла в полтора раза за первые две недели."
+},
+{
+  author: "Анна",
+  role: "Product Lead, Imedia Solutions",
+  quote: "Марго взяла на себя дизайн-систему и за полгода превратила хаос из 200+ компонентов в библиотеку, на которой команда строит интерфейсы по сей день. Скорость разработки выросла в 2 раза."
+},
+{
+  author: "Дмитрий",
+  role: "CEO, стартап в beauty-tech",
+  quote: "Очень редкое сочетание: продуктовое мышление + сильный визуал. Не делает «красиво ради красиво», всегда задаёт вопросы про метрики и сценарии. Мы прошли pre-seed с прототипами, которые она нарисовала за неделю."
+},
+{
+  author: "Олеся",
+  role: "Junior Designer, бывшая менти",
+  quote: "Менторила меня полгода в Dmorpheus. Объясняла не «как делать», а «почему так», что важнее. Через неё я поняла, что такое продуктовый подход — и попала на свою первую middle-роль."
+},
+{
+  author: "Сергей",
+  role: "Tech Lead, Cointraffic",
+  quote: "Дизайнер, с которым приятно работать инженеру. Макеты приходят с описанием логики, edge-кейсов и состояний. Нам почти не приходится возвращаться с вопросами — всё уже продумано."
+}];
+
+
+function App() {
+  const [activeSection, setActiveSection] = React.useState("Я");
+  const [activeTab, setActiveTab] = React.useState("Все");
+  const [shownCases, setShownCases] = React.useState(8);
+  const [reviewPage, setReviewPage] = React.useState(0);
+  const [openReview, setOpenReview] = React.useState(null);
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  const [lang, setLang] = React.useState("RU");
+  const lockScrollSpy = React.useRef(false);
+  const lockTimer = React.useRef(null);
+
+  // Below 1024 px (tablet + mobile) the reviews carousel shows one card per page;
+  // on desktop it shows two side-by-side. Tracked via matchMedia so the page count
+  // and active page reset cleanly when the viewport crosses the breakpoint.
+  const [isCompact, setIsCompact] = React.useState(
+    () => typeof window !== "undefined" && window.matchMedia("(max-width: 727px)").matches
+  );
+  React.useEffect(() => {
+    const mql = window.matchMedia("(max-width: 727px)");
+    const onChange = (e) => { setIsCompact(e.matches); setReviewPage(0); };
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
+  }, []);
+
+  // Close the menu when the viewport grows past tablet — avoids the
+  // overlay being stuck open if the user resizes from mobile to desktop.
+  React.useEffect(() => {
+    const mql = window.matchMedia("(min-width: 1024px)");
+    const onChange = (e) => { if (e.matches) setMenuOpen(false); };
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
+  }, []);
+
+  // Scroll-spy: update active nav as user scrolls past section anchors.
+  // On desktop (≥1024): "Контакты" activates only when fully visible (IntersectionObserver threshold 1.0)
+  // or when the page is scrolled to the very bottom. All other sections use the standard +200px heuristic.
+  // On tablet/mobile: all sections use the standard heuristic.
+  React.useEffect(() => {
+    const ids = ["Я", "Кейсы", "Отзывы", "Бэкграунд", "Опыт", "Контакты"];
+    const otherIds = ["Я", "Кейсы", "Отзывы", "Бэкграунд", "Опыт"];
+
+    let contactsFullyVisible = false;
+    let observer = null;
+
+    const isDesktop = () => window.innerWidth >= 1024;
+
+    const updateActive = () => {
+      if (lockScrollSpy.current) return;
+      if (isDesktop()) {
+        const atBottom =
+          window.scrollY + window.innerHeight >=
+          document.documentElement.scrollHeight - 5;
+        if (atBottom || contactsFullyVisible) {
+          setActiveSection("Контакты");
+          return;
+        }
+        const y = window.scrollY + 200;
+        let current = "Я";
+        for (const id of otherIds) {
+          const el = document.getElementById(id);
+          if (el && el.offsetTop <= y) current = id;
+        }
+        setActiveSection(current);
+      } else {
+        const y = window.scrollY + 200;
+        let current = "Я";
+        for (const id of ids) {
+          const el = document.getElementById(id);
+          if (el && el.offsetTop <= y) current = id;
+        }
+        setActiveSection(current);
+      }
+    };
+
+    const setupObserver = () => {
+      if (observer) { observer.disconnect(); observer = null; }
+      contactsFullyVisible = false;
+      if (!isDesktop()) return;
+      const contactsEl = document.getElementById("Контакты");
+      if (!contactsEl) return;
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          contactsFullyVisible = entry.isIntersecting && entry.intersectionRatio >= 1.0;
+          updateActive();
+        },
+        { threshold: 1.0 }
+      );
+      observer.observe(contactsEl);
+    };
+
+    let resizeTimer = null;
+    const onResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        setupObserver();
+        updateActive();
+      }, 200);
+    };
+
+    setupObserver();
+    window.addEventListener("scroll", updateActive, { passive: true });
+    window.addEventListener("resize", onResize);
+    updateActive();
+
+    return () => {
+      window.removeEventListener("scroll", updateActive);
+      window.removeEventListener("resize", onResize);
+      clearTimeout(resizeTimer);
+      if (observer) observer.disconnect();
+    };
+  }, []);
+
+  const handleNav = (label) => {
+    const el = document.getElementById(label);
+    if (!el) return;
+    if (label === "Контакты") {
+      // Immediately mark contacts active; lock scroll-spy so the ongoing
+      // smooth scroll doesn't let the spy revert to the section above.
+      setActiveSection("Контакты");
+      lockScrollSpy.current = true;
+      clearTimeout(lockTimer.current);
+      lockTimer.current = setTimeout(() => { lockScrollSpy.current = false; }, 1200);
+      el.scrollIntoView({ behavior: "smooth" });
+    } else {
+      window.scrollTo({ top: el.offsetTop - 100, behavior: "smooth" });
+    }
+  };
+
+  const visible = CASES.slice(0, shownCases);
+
+  return (
+    <>
+          <Header menuOpen={menuOpen} onMenuToggle={() => setMenuOpen((v) => !v)} />
+          <SideNav active={activeSection} onSelect={handleNav} />
+          <MenuOverlay
+            open={menuOpen}
+            onClose={() => setMenuOpen(false)}
+            active={activeSection}
+            onSelect={handleNav}
+            lang={lang}
+            onLangChange={setLang}
+          />
+
+          <main>
+            <div className="content">
+
+              {/* === Я === */}
+              <section id="Я" className="hero">
+                <Avatar />
+                <h1>{"Маргарита Анисько\nПродуктовый и UX/UI дизайнер"}</h1>
+                <p className="sub">
+                  5 лет в дизайне сложных продуктов. Структурирую хаос, проектирую
+                  масштабируемые дизайн-системы, работаю на результат и метрики.
+                </p>
+                <div className="ctas" style={{ margin: "0px" }}>
+                  <Button accent="primary" onClick={() => handleNav("Контакты")}>Обсудить проект</Button>
+                  <Button accent="secondary" onClick={() => handleNav("Кейсы")}>Смотреть портфолио</Button>
+                </div>
+              </section>
+
+              <hr className="divider-solid" />
+
+              {/* === Кейсы === */}
+              <section id="Кейсы" className="section">
+                <div className="section-heading" style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+                  <h2 className="title">Релевантные кейсы</h2>
+                  <div className="cases-heading">
+                    <div className="cases-tabs">
+                      {CASE_TABS.map((t) =>
+                  <Tab
+                    key={t.label}
+                    active={activeTab === t.label}
+                    onClick={() => setActiveTab(t.label)}>
+                    
+                          {t.label}
+                        </Tab>
+                  )}
+                    </div>
+                    <span className="cases-count">12 проектов</span>
+                  </div>
+                </div>
+
+                <div className="cases-grid">
+                  {(() => {
+                // group cases by adjacency: pair two smalls in a row, big alone.
+                const rows = [];
+                let buf = [];
+                visible.forEach((c, i) => {
+                  if (c.size === "big") {
+                    if (buf.length) {rows.push(buf);buf = [];}
+                    rows.push([c]);
+                  } else {
+                    buf.push(c);
+                    if (buf.length === 2) {rows.push(buf);buf = [];}
+                  }
+                });
+                if (buf.length) rows.push(buf);
+                return rows.map((row, i) =>
+                row.length === 1 ?
+                <CaseCard key={i} {...row[0]} /> :
+
+                <div key={i} className="cases-row-two">
+                          {row.map((c, j) => <CaseCard key={j} {...c} />)}
+                        </div>
+
+                );
+              })()}
+                </div>
+
+                <div className="cases-more" style={{ display: "flex", justifyContent: "center" }}>
+                  <Button accent="secondary" onClick={() => setShownCases((n) => n + 4)}>
+                    Показать еще
+                  </Button>
+                </div>
+              </section>
+
+              <hr className="divider-solid" />
+
+              {/* === Отзывы === */}
+              <section id="Отзывы" className="section">
+                {(() => {
+              const perPage = isCompact ? 1 : 2;
+              const pageCount = Math.ceil(REVIEWS.length / perPage);
+              const pages = Array.from({ length: pageCount }, (_, p) =>
+              REVIEWS.slice(p * perPage, p * perPage + perPage)
+              );
+              const canPrev = reviewPage > 0;
+              const canNext = reviewPage < pageCount - 1;
+              return (
+                <>
+                      <div className="reviews-heading">
+                        <h2 className="title" style={{ fontWeight: "500", fontSize: "48px" }}>Отзывы от коллег и клиентов</h2>
+                        <div className="reviews-arrows">
+                          <button
+                        className="arrow-btn"
+                        disabled={!canPrev}
+                        onClick={() => setReviewPage((p) => Math.max(0, p - 1))}
+                        aria-label="Предыдущие отзывы">
+                        
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                              <path d="M12.5 4 6.5 10l6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </button>
+                          <button
+                        className="arrow-btn"
+                        disabled={!canNext}
+                        onClick={() => setReviewPage((p) => Math.min(pageCount - 1, p + 1))}
+                        aria-label="Следующие отзывы">
+                        
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                              <path d="m7.5 4 6 6-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="reviews-viewport">
+                        <div className="reviews-track" style={{ transform: `translateX(-${reviewPage * 100}%)` }}>
+                          {pages.map((page, p) =>
+                      <div key={p} className="reviews-page">
+                              {page.map((r, i) => <ReviewCard key={i} {...r} onReadMore={setOpenReview} />)}
+                            </div>
+                      )}
+                        </div>
+                      </div>
+                      <div className="reviews-footer">
+                        <span>*Отзывы также опубликованы в Linked In. <a href="#" className="inline-link">Посмотреть</a></span>
+                      </div>
+                    </>);
+
+            })()}
+              </section>
+
+              <hr className="divider-solid" />
+
+              {/* === Бэкграунд === */}
+              <section id="Бэкграунд" className="section">
+                <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+                  <h2 className="title" style={{ fontSize: "48px", fontWeight: "500" }}>Бэкграунд</h2>
+                  <p style={{ margin: 0, maxWidth: 670, font: "400 18px/26px var(--font-body)", color: "var(--ink-600)" }}>
+                    Окончила вышку, ряд курсов. Постоянно развиваюсь, прокачиваю навыки
+                    и стараюсь смотреть шире одной роли дизайнера.
+                  </p>
+                </div>
+
+                <div className="bg-grid">
+                  <div className="bg-col">
+                    <h2 style={{ margin: 0, font: "400 30px/36px var(--font-display)", color: "var(--ink-900)" }}>Вышка</h2>
+                    <PositionHeader
+                  title="БГАИ"
+                  tag="Дизайн виртуальной среды"
+                  year="2019-2024"
+                  logo="assets/logo-bgai.png" />
+                
+                    <p style={{ margin: 0, maxWidth: 750, font: "400 18px/26px var(--font-body)", color: "var(--ink-600)", whiteSpace: "pre-line" }}>
+                      {"Окончила топовый белорусский вуз по дизайну. Получила классическую художественную базу: композиция, цветоведение, типографика. Освоила детальный подход к проектированию продуктов: сначала ресёрч, структура и логика, потом визуал и детали.\n\nТам же получила базу по инструментам: Figma, Adobe (Photoshop, Illustrator, After Effects, Premiere Pro, InDesign) и 3D-моделирование."}
+                    </p>
+                  </div>
+
+                  <div className="bg-col">
+                    <h2 style={{ margin: 0, font: "400 30px/36px var(--font-display)", color: "var(--ink-900)" }}>Курсы</h2>
+                    <CourseEntry title="Нейронка" tag="FILTIH SPACE" year={2026} />
+                    <hr className="divider-dashed" />
+                    <CourseEntry title="Complete Web & Mobile Designer in 2022: UI/UX, Figma, HTML/CSS" tag="Zero To Mastery Academy" year={2022} />
+                    <hr className="divider-dashed" />
+                    <CourseEntry title="Designer's Workbook" tag="EPAM" year={2022} />
+                  </div>
+                </div>
+              </section>
+
+              <hr className="divider-solid" />
+
+              {/* === Опыт === */}
+              <section id="Опыт" className="section" style={{ gap: "64px" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+                  <h2 className="title" style={{ fontSize: "48px", fontWeight: "500" }}>Опыт работы</h2>
+                  <p style={{ margin: 0, font: "400 18px/26px var(--font-body)", color: "var(--ink-600)" }}>
+                    Здесь только самое главное, подробнее с моим опытом можно ознакомиться в <a href="#" className="inline-link">резюме</a>.
+                  </p>
+                </div>
+
+                <div className="exp-list">
+                  <ExperienceEntry
+                title="Senior Product Designer"
+                tag="Cointraffic, Эстония"
+                year="май 2025 – апрель 2026"
+                body={"Совмещала роли Product Designer (80%) и Graphic Designer (20%). Выступала единственным дизайнером на проекте. Спроектировала интерфейсы трёх продуктов, объединённых общей библиотекой стилей и компонентов. Настроила прозрачный handoff: структурированные макеты с автолейаутами, описанием логики и edge-кейсов.\n\nСоздала узнаваемый изометрический fancy-стиль для компании, обеспечив унификацию графических и визуальных материалов в разных доменах."}
+                linkedCases={["Кейс 1", "Кейс 2", "Кейс 3"]}
+                reviews={["1 отзыв руководителя", "2 отзыва коллег"]} />
+              
+                  <hr className="divider-dashed" />
+                  <ExperienceEntry
+                title="Senior UX/UI Designer"
+                tag="Dmorpheus GmbH, Австрия"
+                year="январь 2024 – апрель 2025"
+                body={"Возглавляла отдел дизайна, выстроила дизайн-процесс, менторила младших дизайнеров, проводила ревью макетов и сформировала культуру качества.\n\nПроектировала веб-интерфейсы, лендинги, корпоративные сайты и e-commerce под бизнес-цели клиентов. Проводила презентации дизайна клиентам на английском языке.\n\nВнедрила брендинг и моушн как новые услуги компании, увеличив прибыль."}
+                linkedCases={["Кейс 1", "Кейс 2"]}
+                reviews={["1 отзыв руководителя", "2 отзыва коллег"]} />
+              
+                  <hr className="divider-dashed" />
+                  <ExperienceEntry
+                title="Middle UX/UI designer"
+                tag="Imedia Solutions, Беларусь"
+                year="ноябрь 2022 – январь 2024"
+                body={"Проектировала веб- и мобильные интерфейсы: корпоративные сайты, интернет-магазины, лендинги, сайты-визитки, SaaS, CRM-системы и мобильные приложения. Проектировала с нуля и дорабатывала дизайн-системы и UI-киты. Вела несколько проектов параллельно. Презентовала решения клиентам.\n\nЗакрывала задачи по графическому дизайну: брендинг (логотипы, фирменный стиль, брендбуки, оформление аккаунтов в соцсетях). Расширила спектр услуг компании: внедрила 3D-графику и современные визуальные подходы."}
+                linkedCases={["Кейс 1", "Кейс 2", "Кейс 3", "Кейс 4"]}
+                reviews={["1 отзыв руководителя", "2 отзыва коллег"]} />
+              
+                  <hr className="divider-dashed" />
+                  <Button accent="text" size="sm" style={{ alignSelf: "flex-start" }}>+ Показать еще одно место работы</Button>
+                </div>
+              </section>
+
+              <hr className="divider-solid" />
+
+              {/* === Контакты — shared component, used on case-detail too === */}
+              <Contacts />
+
+            </div>
+          </main>
+
+          <ReviewModal review={openReview} onClose={() => setOpenReview(null)} />
+        </>);
+
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
+
