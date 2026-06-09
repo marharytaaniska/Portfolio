@@ -9,9 +9,16 @@ import RichText from '@/components/RichText'
 interface ContactsSectionProps {
   data: Contact
   contactEmail?: string
+  copyEmailLabel?: string
+  copyEmailSuccess?: string
 }
 
-export function ContactsSection({ data, contactEmail = '' }: ContactsSectionProps) {
+export function ContactsSection({
+  data,
+  contactEmail = '',
+  copyEmailLabel,
+  copyEmailSuccess,
+}: ContactsSectionProps) {
   const t = useTranslations('contacts')
   const { copied, copy } = useCopyToClipboard(contactEmail, 1500)
 
@@ -63,7 +70,7 @@ export function ContactsSection({ data, contactEmail = '' }: ContactsSectionProp
 
         <div className="contacts-links">
           <Button accent="text" size="sm" onClick={copy}>
-            {copied ? t('copied') : t('copyEmail')}
+            {copied ? (copyEmailSuccess ?? t('copied')) : (copyEmailLabel ?? t('copyEmail'))}
           </Button>
           {data.social_links?.map((link, i) => (
             <Button

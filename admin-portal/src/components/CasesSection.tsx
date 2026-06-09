@@ -6,12 +6,16 @@ import type { Case, Tag } from '@/payload-types'
 import { Tab } from './Tab'
 import { CaseCard } from './CaseCard'
 import { Button } from './Button'
+import { PasswordModal } from './PasswordModal'
+import type { CaseAccessLabels } from './PasswordModal'
 
 interface CasesSectionProps {
   cases: Case[]
   totalCases: number
   tags: Tag[]
   sectionTitle?: string
+  allTagLabel?: string
+  caseAccessLabels?: CaseAccessLabels
 }
 
 // Initial 8 cases: 2→1→2→1→2 (5 rows)
@@ -52,10 +56,18 @@ function buildAllRows(cases: Case[]): LayoutRow[] {
   return rows
 }
 
-export function CasesSection({ cases, totalCases, tags, sectionTitle }: CasesSectionProps) {
+export function CasesSection({
+  cases,
+  totalCases,
+  tags,
+  sectionTitle,
+  allTagLabel,
+  caseAccessLabels = {},
+}: CasesSectionProps) {
   const t = useTranslations('cases')
   const [activeTagSlug, setActiveTagSlug] = React.useState<string | null>(null)
   const [shownRows, setShownRows] = React.useState(INITIAL_ROWS)
+  const [modalSlug, setModalSlug] = React.useState<string | null>(null)
 
   const filtered =
     activeTagSlug === null
@@ -85,7 +97,7 @@ export function CasesSection({ cases, totalCases, tags, sectionTitle }: CasesSec
         <div className="cases-heading">
           <div className="cases-tabs">
             <Tab active={activeTagSlug === null} onClick={() => handleTabChange(null)}>
-              {t('all')}
+              {allTagLabel ?? t('all')}
             </Tab>
             {tags.map((tag, i) => {
               const slug = tag.tag_slug || String(tag.id) || String(i)
@@ -107,11 +119,27 @@ export function CasesSection({ cases, totalCases, tags, sectionTitle }: CasesSec
       <div className="cases-grid">
         {visibleRows.map((row, i) =>
           row.wide ? (
-            <CaseCard key={i} caseItem={row.items[0]} size="big" />
+            <CaseCard
+              key={i}
+              caseItem={row.items[0]}
+              size="big"
+              onPasswordClick={
+                (row.items[0] as any).password_required
+                  ? () => setModalSlug(row.items[0].slug)
+                  : undefined
+              }
+            />
           ) : (
             <div key={i} className="cases-row-two">
               {(row.items as Case[]).map((c, j) => (
-                <CaseCard key={j} caseItem={c} size="small" />
+                <CaseCard
+                  key={j}
+                  caseItem={c}
+                  size="small"
+                  onPasswordClick={
+                    (c as any).password_required ? () => setModalSlug(c.slug) : undefined
+                  }
+                />
               ))}
             </div>
           ),
@@ -125,6 +153,12 @@ export function CasesSection({ cases, totalCases, tags, sectionTitle }: CasesSec
           </Button>
         </div>
       )}
+
+      <PasswordModal
+        caseSlug={modalSlug}
+        onClose={() => setModalSlug(null)}
+        labels={caseAccessLabels}
+      />
     </section>
   )
 }

@@ -3,14 +3,13 @@ import type { CollectionConfig } from 'payload'
 export const Tags: CollectionConfig = {
   slug: 'tags',
   labels: {
-    singular: 'Тег',
-    plural: 'Теги',
+    singular: 'Tag',
+    plural: 'Tags',
   },
   admin: {
     useAsTitle: 'tag_name',
     defaultColumns: ['tag_name', 'order'],
     defaultSort: 'order',
-    group: 'Кейсы',
   },
   fields: [
     {

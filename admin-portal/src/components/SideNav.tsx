@@ -1,38 +1,40 @@
 'use client'
 
 import React from 'react'
-import { useTranslations } from 'next-intl'
-import { SECTION_KEYS, type SectionKey } from '@/constants/nav'
 import { LiveDot } from './LiveDot'
 
-interface SideNavProps {
-  active?: SectionKey | null
-  onSelect?: (key: SectionKey) => void
+interface NavItem {
+  label: string
+  anchor: string
 }
 
-export function SideNav({ active = 'hero', onSelect }: SideNavProps) {
-  const t = useTranslations('nav')
+interface SideNavProps {
+  items: NavItem[]
+  active?: string | null
+  onSelect?: (anchor: string) => void
+}
 
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, key: SectionKey) => {
+export function SideNav({ items, active, onSelect }: SideNavProps) {
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, anchor: string) => {
     if (onSelect) {
       e.preventDefault()
-      onSelect(key)
+      onSelect(anchor)
     }
   }
 
   return (
     <aside className="side-rail">
       <nav className="side-rail-nav">
-        {SECTION_KEYS.map((key) => {
-          const isActive = key === active
+        {items.map((item) => {
+          const isActive = item.anchor === active
           return (
             <a
-              key={key}
-              href={`#${key}`}
-              onClick={(e) => handleClick(e, key)}
+              key={item.anchor}
+              href={`#${item.anchor}`}
+              onClick={(e) => handleClick(e, item.anchor)}
               className={isActive ? 'side-rail-item is-active' : 'side-rail-item'}
             >
-              {t(key)}
+              {item.label}
               {isActive && <LiveDot />}
             </a>
           )

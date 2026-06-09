@@ -5,6 +5,7 @@ import RichText from '@/components/RichText'
 import { MetaDot } from './LiveDot'
 import { Link } from '@/i18n/navigation'
 import type { Locale } from '@/i18n/routing'
+import { ExperienceListClient } from './ExperienceListClient'
 
 interface ExperienceSectionProps {
   section: ExperienceSectionData
@@ -52,7 +53,12 @@ export async function ExperienceSection({ section, experiences }: ExperienceSect
         )}
       </div>
 
-      <div className="exp-list" style={{ gap: entryGap }}>
+      <ExperienceListClient
+        showMoreLabel={section.show_more_label ?? '+ Показать ещё'}
+        collapseLabel={section.collapse_label ?? 'Свернуть'}
+        entryGap={entryGap}
+        dividerStyle={dividerStyle}
+      >
         {experiences.map((exp, i) => {
           const logo =
             exp.company_logo && typeof exp.company_logo === 'object'
@@ -201,7 +207,7 @@ export async function ExperienceSection({ section, experiences }: ExperienceSect
             </div>
           )
         })}
-      </div>
+      </ExperienceListClient>
     </section>
   )
 }

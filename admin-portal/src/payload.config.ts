@@ -16,7 +16,6 @@ import { Experience } from './collections/Experience'
 
 // Шаблонные глобалы (оставляем)
 import { Header } from './Header/config'
-import { Footer } from './Footer/config'
 
 // Новые глобалы из ТЗ
 import { HeroGlobal } from './collections/HeroGlobal'
@@ -25,7 +24,8 @@ import { TestimonialsGlobal } from './collections/TestimonialsGlobal'
 import { BackgroundGlobal } from './collections/BackgroundGlobal'
 import { ContactsGlobal } from './collections/ContactsGlobal'
 import { ExperienceGlobal } from './collections/ExperienceGlobal'
-import { SiteSettingsGlobal } from './collections/SiteSettingsGlobal'
+import { CaseDetailPageGlobal } from './collections/CaseDetailPageGlobal'
+import { CaseAccessGlobal } from './collections/CaseAccessGlobal'
 
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
@@ -94,15 +94,15 @@ export default buildConfig({
   globals: [
     // Шаблонные
     Header,
-    Footer,
     // Из ТЗ
     HeroGlobal,
     RelevantCasesGlobal,
     TestimonialsGlobal,
     BackgroundGlobal,
-    ContactsGlobal,
     ExperienceGlobal,
-    SiteSettingsGlobal,
+    ContactsGlobal,
+    CaseDetailPageGlobal,
+    CaseAccessGlobal,
   ],
   cors: [getServerSideURL()].filter(Boolean),
   plugins,

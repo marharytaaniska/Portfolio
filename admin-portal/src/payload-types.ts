@@ -103,25 +103,25 @@ export interface Config {
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('ru' | 'en') | ('ru' | 'en')[];
   globals: {
     header: Header;
-    footer: Footer;
     hero: Hero;
     'relevant-cases-section': RelevantCasesSection;
     'testimonials-section': TestimonialsSection;
     background: Background;
-    contacts: Contact;
     'experience-section': ExperienceSection;
-    'site-settings': SiteSetting;
+    contacts: Contact;
+    'case-detail-page': CaseDetailPage;
+    'case-access': CaseAccess;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
-    footer: FooterSelect<false> | FooterSelect<true>;
     hero: HeroSelect<false> | HeroSelect<true>;
     'relevant-cases-section': RelevantCasesSectionSelect<false> | RelevantCasesSectionSelect<true>;
     'testimonials-section': TestimonialsSectionSelect<false> | TestimonialsSectionSelect<true>;
     background: BackgroundSelect<false> | BackgroundSelect<true>;
-    contacts: ContactsSelect<false> | ContactsSelect<true>;
     'experience-section': ExperienceSectionSelect<false> | ExperienceSectionSelect<true>;
-    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    contacts: ContactsSelect<false> | ContactsSelect<true>;
+    'case-detail-page': CaseDetailPageSelect<false> | CaseDetailPageSelect<true>;
+    'case-access': CaseAccessSelect<false> | CaseAccessSelect<true>;
   };
   locale: 'ru' | 'en';
   widgets: {
@@ -320,17 +320,20 @@ export interface Tag {
  */
 export interface Case {
   id: number;
+  /**
+   * Show this case on the website
+   */
+  enabled?: boolean | null;
   title: string;
   /**
    * Заполняется автоматически из названия (RU)
    */
   slug: string;
   cover: number | Media;
+  client?: string | null;
+  tags: (number | Tag)[];
   niche: string;
   year: number;
-  tags: (number | Tag)[];
-  order?: number | null;
-  is_featured?: boolean | null;
   description: {
     root: {
       type: string;
@@ -346,7 +349,16 @@ export interface Case {
     };
     [k: string]: unknown;
   };
-  client?: string | null;
+  order?: number | null;
+  is_featured?: boolean | null;
+  /**
+   * Protect this case with a password
+   */
+  password_required?: boolean | null;
+  /**
+   * Required to view this case
+   */
+  password?: string | null;
   content_blocks: (
     | {
         has_title?: boolean | null;
@@ -390,11 +402,21 @@ export interface Case {
     | {
         link_label: string;
         link_url: string;
-        button_label?: string | null;
-        button_url?: string | null;
         id?: string | null;
         blockName?: string | null;
         blockType: 'link_block';
+      }
+    | {
+        button_label: string;
+        button_url: string;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'button_block';
+      }
+    | {
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'divider_block';
       }
   )[];
   updatedAt: string;
@@ -695,16 +717,19 @@ export interface TagsSelect<T extends boolean = true> {
  * via the `definition` "cases_select".
  */
 export interface CasesSelect<T extends boolean = true> {
+  enabled?: T;
   title?: T;
   slug?: T;
   cover?: T;
+  client?: T;
+  tags?: T;
   niche?: T;
   year?: T;
-  tags?: T;
+  description?: T;
   order?: T;
   is_featured?: T;
-  description?: T;
-  client?: T;
+  password_required?: T;
+  password?: T;
   content_blocks?:
     | T
     | {
@@ -740,8 +765,20 @@ export interface CasesSelect<T extends boolean = true> {
           | {
               link_label?: T;
               link_url?: T;
+              id?: T;
+              blockName?: T;
+            };
+        button_block?:
+          | T
+          | {
               button_label?: T;
               button_url?: T;
+              id?: T;
+              blockName?: T;
+            };
+        divider_block?:
+          | T
+          | {
               id?: T;
               blockName?: T;
             };
@@ -842,45 +879,22 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface Header {
   id: number;
-  navItems?:
-    | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?: {
-            relationTo: 'cases';
-            value: number | Case;
-          } | null;
-          url?: string | null;
+  header?: {
+    cv_label?: string | null;
+    cv_url?: string | null;
+    copy_email_label?: string | null;
+    copy_email_text?: string | null;
+    copy_email_success?: string | null;
+  };
+  left_menu?: {
+    items?:
+      | {
           label: string;
-        };
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "footer".
- */
-export interface Footer {
-  id: number;
-  navItems?:
-    | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?: {
-            relationTo: 'cases';
-            value: number | Case;
-          } | null;
-          url?: string | null;
-          label: string;
-        };
-        id?: string | null;
-      }[]
-    | null;
+          anchor: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -890,6 +904,10 @@ export interface Footer {
  */
 export interface Hero {
   id: number;
+  /**
+   * Show this section on the website
+   */
+  enabled?: boolean | null;
   avatar: number | Media;
   title: string;
   subtitle: string;
@@ -906,7 +924,13 @@ export interface Hero {
  */
 export interface RelevantCasesSection {
   id: number;
+  /**
+   * Show this section on the website
+   */
+  enabled?: boolean | null;
   section_title: string;
+  all_tag_label?: string | null;
+  show_more_label?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -916,6 +940,11 @@ export interface RelevantCasesSection {
  */
 export interface TestimonialsSection {
   id: number;
+  /**
+   * Show this section on the website
+   */
+  enabled?: boolean | null;
+  section_title?: string | null;
   section_content?: {
     root: {
       type: string;
@@ -940,6 +969,10 @@ export interface TestimonialsSection {
  */
 export interface Background {
   id: number;
+  /**
+   * Show this section on the website
+   */
+  enabled?: boolean | null;
   section_title: string;
   section_description?: {
     root: {
@@ -996,10 +1029,45 @@ export interface Background {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "experience-section".
+ */
+export interface ExperienceSection {
+  id: number;
+  /**
+   * Show this section on the website
+   */
+  enabled?: boolean | null;
+  section_title: string;
+  section_description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  show_more_label?: string | null;
+  collapse_label?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "contacts".
  */
 export interface Contact {
   id: number;
+  /**
+   * Show this section on the website
+   */
+  enabled?: boolean | null;
   title: string;
   description_1?: {
     root: {
@@ -1047,72 +1115,28 @@ export interface Contact {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "experience-section".
+ * via the `definition` "case-detail-page".
  */
-export interface ExperienceSection {
+export interface CaseDetailPage {
   id: number;
-  section_title: string;
-  section_description?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  style?: {
-    heading_color?: ('var(--ink-900)' | 'var(--ink-800)' | 'var(--ink-600)' | 'var(--accent)') | null;
-    body_color?: ('var(--ink-900)' | 'var(--ink-600)' | 'var(--ink-400)') | null;
-    meta_color?: ('var(--ink-600)' | 'var(--ink-400)' | 'var(--ink-300)') | null;
-    link_color?: ('var(--ink-600)' | 'var(--ink-900)' | 'var(--accent)') | null;
-    /**
-     * Вертикальный отступ между карточками опыта работы
-     */
-    entry_gap?: number | null;
-    /**
-     * Отступ между шапкой (логотип + должность) и блоком обязанностей
-     */
-    inner_gap?: number | null;
-    /**
-     * Горизонтальный отступ между колонкой обязанностей и колонкой кейсов
-     */
-    col_gap?: number | null;
-    /**
-     * Ширина левой колонки (обязанности) в % от общей ширины. Правая колонка (кейсы) займёт остаток.
-     */
-    responsibilities_ratio?: number | null;
-    /**
-     * Ширина и высота квадратного логотипа в шапке записи
-     */
-    logo_size?: number | null;
-    section_title_size?: ('32px' | '40px' | '48px') | null;
-    body_font_size?: ('16px' | '18px' | '20px') | null;
-    divider_style?: ('dashed' | 'solid' | 'none') | null;
-  };
+  label_client: string;
+  label_services: string;
+  label_industries: string;
+  label_date: string;
+  back_label?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "site-settings".
+ * via the `definition` "case-access".
  */
-export interface SiteSetting {
+export interface CaseAccess {
   id: number;
-  /**
-   * URL, который открывается при нажатии кнопок «CV» и «Download CV» по всему сайту.
-   */
-  cv_url?: string | null;
-  /**
-   * Этот адрес копируется в буфер обмена при нажатии «Copy Email» (в шапке, меню и разделе Контакты).
-   */
-  contact_email?: string | null;
+  modal_title?: string | null;
+  password_placeholder?: string | null;
+  continue_button_label?: string | null;
+  invalid_password_error?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1121,42 +1145,25 @@ export interface SiteSetting {
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
-  navItems?:
+  header?:
     | T
     | {
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-            };
-        id?: T;
+        cv_label?: T;
+        cv_url?: T;
+        copy_email_label?: T;
+        copy_email_text?: T;
+        copy_email_success?: T;
       };
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "footer_select".
- */
-export interface FooterSelect<T extends boolean = true> {
-  navItems?:
+  left_menu?:
     | T
     | {
-        link?:
+        items?:
           | T
           | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
               label?: T;
+              anchor?: T;
+              id?: T;
             };
-        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -1167,6 +1174,7 @@ export interface FooterSelect<T extends boolean = true> {
  * via the `definition` "hero_select".
  */
 export interface HeroSelect<T extends boolean = true> {
+  enabled?: T;
   avatar?: T;
   title?: T;
   subtitle?: T;
@@ -1183,7 +1191,10 @@ export interface HeroSelect<T extends boolean = true> {
  * via the `definition` "relevant-cases-section_select".
  */
 export interface RelevantCasesSectionSelect<T extends boolean = true> {
+  enabled?: T;
   section_title?: T;
+  all_tag_label?: T;
+  show_more_label?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1193,6 +1204,8 @@ export interface RelevantCasesSectionSelect<T extends boolean = true> {
  * via the `definition` "testimonials-section_select".
  */
 export interface TestimonialsSectionSelect<T extends boolean = true> {
+  enabled?: T;
+  section_title?: T;
   section_content?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1203,6 +1216,7 @@ export interface TestimonialsSectionSelect<T extends boolean = true> {
  * via the `definition` "background_select".
  */
 export interface BackgroundSelect<T extends boolean = true> {
+  enabled?: T;
   section_title?: T;
   section_description?: T;
   education?:
@@ -1231,9 +1245,24 @@ export interface BackgroundSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "experience-section_select".
+ */
+export interface ExperienceSectionSelect<T extends boolean = true> {
+  enabled?: T;
+  section_title?: T;
+  section_description?: T;
+  show_more_label?: T;
+  collapse_label?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "contacts_select".
  */
 export interface ContactsSelect<T extends boolean = true> {
+  enabled?: T;
   title?: T;
   description_1?: T;
   description_2?: T;
@@ -1254,38 +1283,27 @@ export interface ContactsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "experience-section_select".
+ * via the `definition` "case-detail-page_select".
  */
-export interface ExperienceSectionSelect<T extends boolean = true> {
-  section_title?: T;
-  section_description?: T;
-  style?:
-    | T
-    | {
-        heading_color?: T;
-        body_color?: T;
-        meta_color?: T;
-        link_color?: T;
-        entry_gap?: T;
-        inner_gap?: T;
-        col_gap?: T;
-        responsibilities_ratio?: T;
-        logo_size?: T;
-        section_title_size?: T;
-        body_font_size?: T;
-        divider_style?: T;
-      };
+export interface CaseDetailPageSelect<T extends boolean = true> {
+  label_client?: T;
+  label_services?: T;
+  label_industries?: T;
+  label_date?: T;
+  back_label?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "site-settings_select".
+ * via the `definition` "case-access_select".
  */
-export interface SiteSettingsSelect<T extends boolean = true> {
-  cv_url?: T;
-  contact_email?: T;
+export interface CaseAccessSelect<T extends boolean = true> {
+  modal_title?: T;
+  password_placeholder?: T;
+  continue_button_label?: T;
+  invalid_password_error?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

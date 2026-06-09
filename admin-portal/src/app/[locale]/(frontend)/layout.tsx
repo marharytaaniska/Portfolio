@@ -37,7 +37,6 @@ export default async function LocaleLayout({ children, params }: Props) {
       suppressHydrationWarning
     >
       <head>
-        <InitTheme />
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
         {routing.locales.map((l) => (
@@ -51,6 +50,7 @@ export default async function LocaleLayout({ children, params }: Props) {
         <link rel="alternate" hrefLang="x-default" href={`${getServerSideURL()}/ru`} />
       </head>
       <body>
+        <InitTheme />
         <Providers>
           <NextIntlClientProvider locale={locale} messages={messages}>
             {children}

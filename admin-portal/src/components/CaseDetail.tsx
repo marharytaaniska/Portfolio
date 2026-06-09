@@ -1,9 +1,9 @@
 import React from 'react'
-import { getTranslations } from 'next-intl/server'
 
 import type { Case, Contact, Media, Tag } from '@/payload-types'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 import { Button } from '@/components/Button'
+import { BackButton } from '@/components/BackButton'
 import { ContactsSection } from '@/components/ContactsSection'
 import { Link } from '@/i18n/navigation'
 
@@ -82,9 +82,22 @@ function LexicalParagraphs({
   return (
     <>
       {data.root.children.map((node, i) => {
-        const children = node.children?.map(renderInline)
-        if (node.type === 'paragraph') return <p key={i} className={cls}>{children}</p>
-        return <div key={i}>{children}</div>
+        if (node.type === 'paragraph') {
+          return <p key={i} className={cls}>{node.children?.map(renderInline)}</p>
+        }
+        if (node.type === 'list') {
+          const Tag = (node as any).listType === 'number' ? 'ol' : 'ul'
+          return (
+            <Tag key={i} className={cls}>
+              {node.children?.map((item, j) => (
+                <li key={j} value={(item as any).value}>
+                  {item.children?.map(renderInline)}
+                </li>
+              ))}
+            </Tag>
+          )
+        }
+        return <div key={i}>{node.children?.map(renderInline)}</div>
       })}
     </>
   )
@@ -183,30 +196,38 @@ function CaseTextBlock({
 // Main export — async server component rendering the full .case-page layout
 // ─────────────────────────────────────────────────────────────────────────────
 
+interface CaseDetailLabels {
+  client?: string
+  services?: string
+  industries?: string
+  date?: string
+  back?: string
+}
+
 interface CaseDetailContentProps {
   caseDoc: Case
   contacts: Contact
+  labels?: CaseDetailLabels
 }
 
-export async function CaseDetailContent({ caseDoc, contacts }: CaseDetailContentProps) {
-  const t = await getTranslations('case')
-
+export async function CaseDetailContent({ caseDoc, contacts, labels }: CaseDetailContentProps) {
   const cover = typeof caseDoc.cover === 'object' ? (caseDoc.cover as Media) : null
   const tags = (caseDoc.tags as Tag[]).filter((tag): tag is Tag => typeof tag === 'object')
 
   const summaryItems: SummaryItem[] = [
-    { label: t('client'), value: caseDoc.client ?? '—' },
-    { label: t('services'), value: tags.map((tag) => tag.tag_name) },
-    { label: t('industries'), value: caseDoc.niche },
-    { label: t('date'), value: String(caseDoc.year) },
+    { label: labels?.client ?? 'Client', value: caseDoc.client ?? '—' },
+    { label: labels?.services ?? 'Services', value: tags.map((tag) => tag.tag_name) },
+    { label: labels?.industries ?? 'Industries', value: caseDoc.niche },
+    { label: labels?.date ?? 'Date', value: String(caseDoc.year) },
   ]
-
-  const hasContentBlocks = caseDoc.content_blocks.length > 0
 
   return (
     <div className="case-page">
       <div className="case-content">
-        <CaseHero title={caseDoc.title} description={caseDoc.description as LexicalDoc} />
+        <div className="case-header-group">
+          <BackButton label={labels?.back ?? 'Back'} />
+          <CaseHero title={caseDoc.title} description={caseDoc.description as LexicalDoc} />
+        </div>
 
         <CaseSummary items={summaryItems} />
 
@@ -214,22 +235,17 @@ export async function CaseDetailContent({ caseDoc, contacts }: CaseDetailContent
           <CaseSingleImage src={getMediaUrl(cover.url)} alt={cover.alt ?? caseDoc.title} />
         )}
 
-        {cover?.url && hasContentBlocks && <hr className="divider-dashed" />}
-
         {caseDoc.content_blocks.map((block, i) => {
           if (block.blockType === 'text_block') {
             const paragraphDocs = (block.paragraphs ?? []).map(
               (p) => p.content as LexicalDoc | null | undefined,
             )
-            const prependDivider = !!block.has_title && i > 0
             return (
-              <React.Fragment key={i}>
-                {prependDivider && <hr className="divider-dashed" />}
-                <CaseTextBlock
-                  title={block.has_title ? block.title : undefined}
-                  paragraphs={paragraphDocs}
-                />
-              </React.Fragment>
+              <CaseTextBlock
+                key={i}
+                title={block.has_title ? block.title : undefined}
+                paragraphs={paragraphDocs}
+              />
             )
           }
 
@@ -249,50 +265,51 @@ export async function CaseDetailContent({ caseDoc, contacts }: CaseDetailContent
           }
 
           if (block.blockType === 'link_block') {
-            const hasLink = block.link_label && block.link_url
-            const hasButton = block.button_label && block.button_url
             return (
-              <React.Fragment key={i}>
-                {hasLink && (
-                  <div className="case-text-block">
-                    <div className="case-block-descriptions">
-                      <p className="case-text">
-                        <a href={block.link_url}>{block.link_label}</a>
-                      </p>
-                    </div>
-                  </div>
-                )}
-                {hasButton && (
-                  <div className="case-cta">
-                    <Button
-                      accent="secondary"
-                      size="lg"
-                      href={block.button_url!}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {block.button_label}
-                      <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        aria-hidden="true"
-                        style={{ display: 'block', flexShrink: 0 }}
-                      >
-                        <path
-                          d="M6 14L14 6M14 6H7M14 6V13"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </Button>
-                  </div>
-                )}
-              </React.Fragment>
+              <div key={i} className="case-text-block">
+                <div className="case-block-descriptions">
+                  <p className="case-text">
+                    <a href={block.link_url}>{block.link_label}</a>
+                  </p>
+                </div>
+              </div>
             )
+          }
+
+          if (block.blockType === 'button_block') {
+            return (
+              <div key={i} className="case-cta">
+                <Button
+                  accent="secondary"
+                  size="lg"
+                  href={block.button_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {block.button_label}
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    aria-hidden="true"
+                    style={{ display: 'block', flexShrink: 0 }}
+                  >
+                    <path
+                      d="M6 14L14 6M14 6H7M14 6V13"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </Button>
+              </div>
+            )
+          }
+
+          if (block.blockType === 'divider_block') {
+            return <hr key={i} className="divider-dashed" />
           }
 
           return null

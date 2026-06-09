@@ -3,14 +3,13 @@ import type { CollectionConfig } from 'payload'
 export const Experience: CollectionConfig = {
   slug: 'experience',
   labels: {
-    singular: 'Место работы',
-    plural: 'Опыт работы',
+    singular: 'Experience item',
+    plural: 'Experience items',
   },
   admin: {
     useAsTitle: 'position_title',
     defaultColumns: ['position_title', 'company_name', 'period', 'order'],
     disableDuplicate: false,
-    group: 'Опыт',
   },
   fields: [
     {

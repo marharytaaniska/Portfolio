@@ -9,8 +9,11 @@ import { LanguageSwitch } from './LanguageSwitch'
 interface SiteHeaderProps {
   menuOpen: boolean
   onMenuToggle: () => void
+  cvLabel?: string
   cvUrl?: string
-  contactEmail?: string
+  copyEmailLabel?: string
+  copyEmailText?: string
+  copyEmailSuccess?: string
 }
 
 function IconMenu() {
@@ -37,13 +40,16 @@ function IconClose() {
 export function SiteHeader({
   menuOpen,
   onMenuToggle,
-  cvUrl = '/cv',
-  contactEmail = '',
+  cvLabel,
+  cvUrl,
+  copyEmailLabel,
+  copyEmailText = '',
+  copyEmailSuccess,
 }: SiteHeaderProps) {
   const t = useTranslations('header')
   const locale = useLocale()
   const [now, setNow] = React.useState<Date | null>(null)
-  const { copied, copy } = useCopyToClipboard(contactEmail)
+  const { copied, copy } = useCopyToClipboard(copyEmailText)
 
   React.useEffect(() => {
     setNow(new Date())
@@ -64,11 +70,13 @@ export function SiteHeader({
       <div className="header-right">
         <div className="header-buttons">
           <Button size="md" accent="ghost" onClick={copy}>
-            {copied ? t('copied') : t('copyEmail')}
+            {copied ? (copyEmailSuccess || t('copied')) : (copyEmailLabel || t('copyEmail'))}
           </Button>
-          <Button size="md" accent="ghost" href={cvUrl} target="_blank" rel="noopener noreferrer">
-            CV
-          </Button>
+          {cvUrl && (
+            <Button size="md" accent="ghost" href={cvUrl} target="_blank" rel="noopener noreferrer">
+              {cvLabel || 'CV'}
+            </Button>
+          )}
         </div>
 
         <span className="header-divider" aria-hidden="true" />

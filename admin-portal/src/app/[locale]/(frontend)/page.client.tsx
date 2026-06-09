@@ -1,22 +1,33 @@
 'use client'
 
 import React from 'react'
-import { useTranslations } from 'next-intl'
-import { SECTION_KEYS, type SectionKey } from '@/constants/nav'
 import { SiteHeader } from '@/components/SiteHeader'
 import { SideNav } from '@/components/SideNav'
 import { MenuOverlay } from '@/components/MenuOverlay'
 
-interface PageShellProps {
-  children: React.ReactNode
-  cvUrl?: string
-  contactEmail?: string
+export interface NavItem {
+  label: string
+  anchor: string
 }
 
-export function PageShell({ children, cvUrl = '/cv', contactEmail = '' }: PageShellProps) {
-  const t = useTranslations('nav')
+export interface NavData {
+  cvLabel?: string
+  cvUrl?: string
+  copyEmailLabel?: string
+  copyEmailText?: string
+  copyEmailSuccess?: string
+  leftMenuItems: NavItem[]
+}
+
+interface PageShellProps {
+  children: React.ReactNode
+  navData: NavData
+}
+
+export function PageShell({ children, navData }: PageShellProps) {
+  const anchors = navData.leftMenuItems.map((i) => i.anchor)
   const [menuOpen, setMenuOpen] = React.useState(false)
-  const [activeSection, setActiveSection] = React.useState<SectionKey>('hero')
+  const [activeSection, setActiveSection] = React.useState<string>(anchors[0] ?? '')
   const lockRef = React.useRef(false)
   const lockTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -26,21 +37,23 @@ export function PageShell({ children, cvUrl = '/cv', contactEmail = '' }: PageSh
       const atBottom =
         window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 5
       if (atBottom) {
-        setActiveSection('contacts')
+        setActiveSection(anchors[anchors.length - 1] ?? '')
         return
       }
       const y = window.scrollY + 200
-      let current: SectionKey = 'hero'
-      for (const key of SECTION_KEYS) {
-        const el = document.getElementById(key)
-        if (el && el.offsetTop <= y) current = key
+      let current = anchors[0] ?? ''
+      for (const anchor of anchors) {
+        const el = document.getElementById(anchor)
+        if (el && el.offsetTop <= y) current = anchor
       }
       setActiveSection(current)
     }
     window.addEventListener('scroll', updateActive, { passive: true })
     updateActive()
     return () => window.removeEventListener('scroll', updateActive)
-  }, [])
+    // anchors identity is stable per render; exhaustive-deps would cause infinite loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [anchors.join(',')])
 
   React.useEffect(() => {
     const mql = window.matchMedia('(min-width: 1024px)')
@@ -51,21 +64,19 @@ export function PageShell({ children, cvUrl = '/cv', contactEmail = '' }: PageSh
     return () => mql.removeEventListener('change', onChange)
   }, [])
 
-  const handleNavSelect = (key: SectionKey) => {
-    setActiveSection(key)
+  const handleNavSelect = (anchor: string) => {
+    setActiveSection(anchor)
     setMenuOpen(false)
     lockRef.current = true
     if (lockTimer.current) clearTimeout(lockTimer.current)
     lockTimer.current = setTimeout(() => {
       lockRef.current = false
     }, 1200)
-    const el = document.getElementById(key)
+    const el = document.getElementById(anchor)
     if (el) {
       const headerH =
         parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 80
       const gap = window.innerWidth <= 727 ? 24 : 48
-      // Defer scroll until after menu overlay closes and body.overflow is restored.
-      // Two rAFs ensure React has re-rendered and the browser has painted.
       requestAnimationFrame(() =>
         requestAnimationFrame(() => {
           const top = el.getBoundingClientRect().top + window.scrollY - headerH - gap
@@ -80,17 +91,28 @@ export function PageShell({ children, cvUrl = '/cv', contactEmail = '' }: PageSh
       <SiteHeader
         menuOpen={menuOpen}
         onMenuToggle={() => setMenuOpen((v) => !v)}
-        cvUrl={cvUrl}
-        contactEmail={contactEmail}
+        cvLabel={navData.cvLabel}
+        cvUrl={navData.cvUrl}
+        copyEmailLabel={navData.copyEmailLabel}
+        copyEmailText={navData.copyEmailText}
+        copyEmailSuccess={navData.copyEmailSuccess}
       />
-      <SideNav active={activeSection} onSelect={handleNavSelect} />
+      <SideNav
+        items={navData.leftMenuItems}
+        active={activeSection}
+        onSelect={handleNavSelect}
+      />
       <MenuOverlay
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
+        items={navData.leftMenuItems}
         active={activeSection}
         onSelect={handleNavSelect}
-        cvUrl={cvUrl}
-        contactEmail={contactEmail}
+        cvLabel={navData.cvLabel}
+        cvUrl={navData.cvUrl}
+        copyEmailLabel={navData.copyEmailLabel}
+        copyEmailText={navData.copyEmailText}
+        copyEmailSuccess={navData.copyEmailSuccess}
       />
       <main>
         <div className="content">{children}</div>

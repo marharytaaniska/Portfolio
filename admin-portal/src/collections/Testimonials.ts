@@ -3,8 +3,8 @@ import type { CollectionConfig } from 'payload'
 export const Testimonials: CollectionConfig = {
   slug: 'testimonials',
   labels: {
-    singular: 'Отзыв',
-    plural: 'Отзывы',
+    singular: 'Reviews item',
+    plural: 'Reviews items',
   },
   admin: {
     useAsTitle: 'author_name',

@@ -2,8 +2,18 @@ import type { GlobalConfig } from 'payload'
 
 export const BackgroundGlobal: GlobalConfig = {
   slug: 'background',
-  label: 'Бэкграунд',
+  label: 'Background',
+  admin: {
+    group: 'Homepage content',
+  },
   fields: [
+    {
+      name: 'enabled',
+      type: 'checkbox',
+      label: 'Enabled',
+      defaultValue: true,
+      admin: { description: 'Show this section on the website' },
+    },
     // ── Общая часть ─────────────────────────────────────────────
     {
       name: 'section_title',

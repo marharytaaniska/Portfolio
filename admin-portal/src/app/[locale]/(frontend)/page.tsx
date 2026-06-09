@@ -1,8 +1,10 @@
+import React from 'react'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import type { Locale } from '@/i18n/routing'
 
 import { PageShell } from './page.client'
+import type { NavData } from './page.client'
 import { HeroSection } from '@/components/HeroSection'
 import { CasesSection } from '@/components/CasesSection'
 import { TestimonialsSection } from '@/components/TestimonialsSection'
@@ -24,7 +26,8 @@ export default async function HomePage({ params: paramsPromise }: Args) {
     contacts,
     experienceSection,
     relevantCasesSection,
-    siteSettings,
+    headerGlobal,
+    caseAccess,
   ] = await Promise.all([
     payload.findGlobal({ slug: 'hero', depth: 2, locale: loc }),
     payload.findGlobal({ slug: 'testimonials-section', locale: loc }),
@@ -32,7 +35,8 @@ export default async function HomePage({ params: paramsPromise }: Args) {
     payload.findGlobal({ slug: 'contacts', locale: loc }),
     payload.findGlobal({ slug: 'experience-section', locale: loc }),
     payload.findGlobal({ slug: 'relevant-cases-section', locale: loc }),
-    payload.findGlobal({ slug: 'site-settings' }),
+    payload.findGlobal({ slug: 'header', locale: loc }),
+    payload.findGlobal({ slug: 'case-access', locale: loc }),
   ])
 
   const [
@@ -42,42 +46,97 @@ export default async function HomePage({ params: paramsPromise }: Args) {
     { docs: experiences },
   ] = await Promise.all([
     payload.find({ collection: 'tags', limit: 100, sort: 'order', locale: loc }),
-    payload.find({ collection: 'cases', limit: 100, sort: 'order', depth: 2, locale: loc }),
+    payload.find({
+      collection: 'cases',
+      limit: 100,
+      sort: 'order',
+      depth: 2,
+      locale: loc,
+      where: { enabled: { equals: true } },
+    }),
     payload.find({ collection: 'testimonials', limit: 100, sort: 'order', locale: loc }),
     payload.find({ collection: 'experience', limit: 100, sort: 'order', depth: 2, locale: loc }),
   ])
 
-  const cvUrl = siteSettings.cv_url ?? '/cv'
-  const contactEmail = siteSettings.contact_email ?? ''
+  const h = headerGlobal as any
+  const navData: NavData = {
+    cvLabel: h?.header?.cv_label ?? undefined,
+    cvUrl: h?.header?.cv_url ?? undefined,
+    copyEmailLabel: h?.header?.copy_email_label ?? undefined,
+    copyEmailText: h?.header?.copy_email_text ?? undefined,
+    copyEmailSuccess: h?.header?.copy_email_success ?? undefined,
+    leftMenuItems: (h?.left_menu?.items ?? []).map((item: any) => ({
+      label: item.label ?? '',
+      anchor: item.anchor ?? '',
+    })),
+  }
 
-  return (
-    <PageShell cvUrl={cvUrl} contactEmail={contactEmail}>
-      <HeroSection data={hero} />
+  const sections: React.ReactNode[] = []
 
-      <hr className="divider-solid" />
+  if ((hero as any).enabled !== false) {
+    sections.push(<HeroSection key="hero" data={hero} />)
+  }
 
+  if ((relevantCasesSection as any).enabled !== false) {
+    const ca = caseAccess as any
+    sections.push(
       <CasesSection
+        key="cases"
         cases={cases}
         totalCases={totalCases}
         tags={tags}
         sectionTitle={(relevantCasesSection as any).section_title ?? 'Cases'}
-      />
+        allTagLabel={(relevantCasesSection as any).all_tag_label ?? undefined}
+        caseAccessLabels={{
+          modalTitle: ca?.modal_title ?? undefined,
+          passwordPlaceholder: ca?.password_placeholder ?? undefined,
+          continueButtonLabel: ca?.continue_button_label ?? undefined,
+          invalidPasswordError: ca?.invalid_password_error ?? undefined,
+        }}
+      />,
+    )
+  }
 
-      <hr className="divider-solid" />
+  if ((testimonialsSection as any).enabled !== false) {
+    sections.push(
+      <TestimonialsSection
+        key="reviews"
+        testimonials={testimonials}
+        section={testimonialsSection}
+      />,
+    )
+  }
 
-      <TestimonialsSection testimonials={testimonials} section={testimonialsSection} />
+  if ((background as any).enabled !== false) {
+    sections.push(<BackgroundSection key="background" background={background} />)
+  }
 
-      <hr className="divider-solid" />
+  if ((experienceSection as any).enabled !== false) {
+    sections.push(
+      <ExperienceSection key="experience" section={experienceSection} experiences={experiences} />,
+    )
+  }
 
-      <BackgroundSection background={background} />
+  if ((contacts as any).enabled !== false) {
+    sections.push(
+      <ContactsSection
+        key="contacts"
+        data={contacts}
+        contactEmail={navData.copyEmailText ?? ''}
+        copyEmailLabel={navData.copyEmailLabel}
+        copyEmailSuccess={navData.copyEmailSuccess}
+      />,
+    )
+  }
 
-      <hr className="divider-solid" />
-
-      <ExperienceSection section={experienceSection} experiences={experiences} />
-
-      <hr className="divider-solid" />
-
-      <ContactsSection data={contacts} contactEmail={contactEmail} />
+  return (
+    <PageShell navData={navData}>
+      {sections.map((section, i) => (
+        <React.Fragment key={i}>
+          {i > 0 && <hr className="divider-solid" />}
+          {section}
+        </React.Fragment>
+      ))}
     </PageShell>
   )
 }

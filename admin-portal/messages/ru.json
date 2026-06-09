@@ -43,5 +43,11 @@
   "contacts": {
     "copyEmail": "Copy Email",
     "copied": "Copied!"
+  },
+  "caseAccess": {
+    "modalTitle": "Для просмотра этого кейса требуется пароль",
+    "passwordPlaceholder": "Введите пароль",
+    "continueButtonLabel": "Продолжить",
+    "invalidPasswordError": "Неверный пароль. Попробуйте ещё раз."
   }
 }

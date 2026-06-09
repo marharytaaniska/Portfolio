@@ -5,19 +5,19 @@ import { SiteHeader } from '@/components/SiteHeader'
 import { SideNav } from '@/components/SideNav'
 import { MenuOverlay } from '@/components/MenuOverlay'
 import { useLocale } from 'next-intl'
-import type { SectionKey } from '@/constants/nav'
+import type { NavData } from '../../page.client'
 
 interface CasePageShellProps {
   children: React.ReactNode
+  navData: NavData
 }
 
-export function CasePageShell({ children }: CasePageShellProps) {
+export function CasePageShell({ children, navData }: CasePageShellProps) {
   const [menuOpen, setMenuOpen] = React.useState(false)
   const locale = useLocale()
 
-  // Navigate back to the homepage section in the correct locale
-  const navigateHome = (key: SectionKey) => {
-    window.location.href = `/${locale}/#${key}`
+  const navigateHome = (anchor: string) => {
+    window.location.href = `/${locale}/#${anchor}`
   }
 
   return (
@@ -25,13 +25,24 @@ export function CasePageShell({ children }: CasePageShellProps) {
       <SiteHeader
         menuOpen={menuOpen}
         onMenuToggle={() => setMenuOpen((v) => !v)}
+        cvLabel={navData.cvLabel}
+        cvUrl={navData.cvUrl}
+        copyEmailLabel={navData.copyEmailLabel}
+        copyEmailText={navData.copyEmailText}
+        copyEmailSuccess={navData.copyEmailSuccess}
       />
-      <SideNav active={null} onSelect={navigateHome} />
+      <SideNav items={navData.leftMenuItems} active={null} onSelect={navigateHome} />
       <MenuOverlay
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
+        items={navData.leftMenuItems}
         active={null}
         onSelect={navigateHome}
+        cvLabel={navData.cvLabel}
+        cvUrl={navData.cvUrl}
+        copyEmailLabel={navData.copyEmailLabel}
+        copyEmailText={navData.copyEmailText}
+        copyEmailSuccess={navData.copyEmailSuccess}
       />
       <main>
         <div className="content">{children}</div>

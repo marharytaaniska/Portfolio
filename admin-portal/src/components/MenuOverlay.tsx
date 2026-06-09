@@ -2,47 +2,78 @@
 
 import React from 'react'
 import { useTranslations } from 'next-intl'
-import { SECTION_KEYS, type SectionKey } from '@/constants/nav'
 import { useCopyToClipboard } from '@/utilities/useCopyToClipboard'
 import { Button } from './Button'
 import { LanguageSwitch } from './LanguageSwitch'
 import { LiveDot } from './LiveDot'
 
+interface NavItem {
+  label: string
+  anchor: string
+}
+
 interface MenuOverlayProps {
   open: boolean
   onClose: () => void
-  active?: SectionKey | null
-  onSelect?: (key: SectionKey) => void
+  items: NavItem[]
+  active?: string | null
+  onSelect?: (anchor: string) => void
+  cvLabel?: string
   cvUrl?: string
-  contactEmail?: string
+  copyEmailLabel?: string
+  copyEmailText?: string
+  copyEmailSuccess?: string
 }
 
 export function MenuOverlay({
   open,
   onClose,
-  active = 'hero',
+  items,
+  active,
   onSelect,
-  cvUrl = '/cv',
-  contactEmail = '',
+  cvLabel,
+  cvUrl,
+  copyEmailLabel,
+  copyEmailText = '',
+  copyEmailSuccess,
 }: MenuOverlayProps) {
-  const t = useTranslations('nav')
-  const th = useTranslations('header')
-  const { copied, copy } = useCopyToClipboard(contactEmail)
+  const t = useTranslations('header')
+  const { copied, copy } = useCopyToClipboard(copyEmailText)
 
   React.useEffect(() => {
     if (!open) return
-    const prevOverflow = document.body.style.overflow
-    const prevPosition = document.body.style.position
-    const prevTop = document.body.style.top
+
     const scrollY = window.scrollY
-    document.body.style.overflow = 'hidden'
+    const supportsScrollbarGutter =
+      typeof CSS !== 'undefined' && CSS.supports('scrollbar-gutter', 'stable')
+    if (!supportsScrollbarGutter) {
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
+      document.body.style.paddingRight = `${scrollbarWidth}px`
+    }
+
     document.body.style.position = 'fixed'
     document.body.style.top = `-${scrollY}px`
+    document.body.style.left = '0'
+    document.body.style.right = '0'
+    document.body.style.width = '100%'
+    document.body.dataset.scrollY = String(scrollY)
+
     return () => {
-      document.body.style.overflow = prevOverflow
-      document.body.style.position = prevPosition
-      document.body.style.top = prevTop
-      window.scrollTo(0, scrollY)
+      const saved = parseInt(document.body.dataset.scrollY || '0', 10)
+      delete document.body.dataset.scrollY
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.left = ''
+      document.body.style.right = ''
+      document.body.style.width = ''
+      document.body.style.paddingRight = ''
+      // Temporarily disable smooth-scroll so the position restore is instant.
+      // Without this, html { scroll-behavior: smooth } animates from 0 → saved.
+      document.documentElement.style.scrollBehavior = 'auto'
+      window.scrollTo(0, saved)
+      requestAnimationFrame(() => {
+        document.documentElement.style.scrollBehavior = ''
+      })
     }
   }, [open])
 
@@ -66,11 +97,6 @@ export function MenuOverlay({
 
   if (!open) return null
 
-  const handleSelect = (key: SectionKey) => {
-    onSelect?.(key)
-    onClose()
-  }
-
   return (
     <div className="menu-overlay" role="dialog" aria-modal="true">
       <div className="menu-backdrop" onClick={onClose} aria-hidden="true" />
@@ -81,19 +107,20 @@ export function MenuOverlay({
           </div>
 
           <nav className="menu-items">
-            {SECTION_KEYS.map((key) => {
-              const isActive = key === active
+            {items.map((item) => {
+              const isActive = item.anchor === active
               return (
                 <a
-                  key={key}
-                  href={`#${key}`}
+                  key={item.anchor}
+                  href={`#${item.anchor}`}
                   onClick={(e) => {
                     e.preventDefault()
-                    handleSelect(key)
+                    onSelect?.(item.anchor)
+                    onClose()
                   }}
                   className={isActive ? 'menu-item is-active' : 'menu-item'}
                 >
-                  <span>{t(key)}</span>
+                  <span>{item.label}</span>
                   {isActive && <LiveDot />}
                 </a>
               )
@@ -104,18 +131,20 @@ export function MenuOverlay({
             <hr className="menu-divider" />
             <div className="menu-cta-row">
               <Button size="md" accent="secondary" style={{ flex: 1 }} onClick={copy}>
-                {copied ? th('copied') : th('copyEmail')}
+                {copied ? (copyEmailSuccess || t('copied')) : (copyEmailLabel || t('copyEmail'))}
               </Button>
-              <Button
-                size="md"
-                accent="secondary"
-                href={cvUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ flex: 1 }}
-              >
-                CV
-              </Button>
+              {cvUrl && (
+                <Button
+                  size="md"
+                  accent="secondary"
+                  href={cvUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ flex: 1 }}
+                >
+                  {cvLabel || 'CV'}
+                </Button>
+              )}
             </div>
           </div>
         </div>

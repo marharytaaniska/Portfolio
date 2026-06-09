@@ -2,8 +2,25 @@ import type { GlobalConfig } from 'payload'
 
 export const TestimonialsGlobal: GlobalConfig = {
   slug: 'testimonials-section',
-  label: 'Отзывы — настройки секции',
+  label: 'Reviews',
+  admin: {
+    group: 'Homepage content',
+  },
   fields: [
+    {
+      name: 'enabled',
+      type: 'checkbox',
+      label: 'Enabled',
+      defaultValue: true,
+      admin: { description: 'Show this section on the website' },
+    },
+    {
+      name: 'section_title',
+      type: 'text',
+      label: 'Заголовок секции',
+      defaultValue: 'Reviews',
+      localized: true,
+    },
     {
       name: 'section_content',
       type: 'richText',

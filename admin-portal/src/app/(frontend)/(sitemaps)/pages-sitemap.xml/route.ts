@@ -3,66 +3,53 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { unstable_cache } from 'next/cache'
 
-const getPagesSitemap = unstable_cache(
+const getPortfolioSitemap = unstable_cache(
   async () => {
     const payload = await getPayload({ config })
     const SITE_URL =
       process.env.NEXT_PUBLIC_SERVER_URL ||
-      process.env.VERCEL_PROJECT_PRODUCTION_URL ||
-      'https://example.com'
+      (process.env.VERCEL_PROJECT_PRODUCTION_URL
+        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+        : 'https://example.com')
 
-    const results = await payload.find({
-      collection: 'pages',
+    const dateFallback = new Date().toISOString()
+
+    // Root locale pages
+    const localePages = ['ru', 'en'].map((locale) => ({
+      loc: `${SITE_URL}/${locale}`,
+      lastmod: dateFallback,
+    }))
+
+    // Published case pages
+    const { docs: cases } = await payload.find({
+      collection: 'cases',
       overrideAccess: false,
-      draft: false,
       depth: 0,
       limit: 1000,
       pagination: false,
       where: {
-        _status: {
-          equals: 'published',
-        },
+        and: [
+          { enabled: { equals: true } },
+          { password_required: { not_equals: true } },
+        ],
       },
-      select: {
-        slug: true,
-        updatedAt: true,
-      },
+      select: { slug: true, updatedAt: true },
     })
 
-    const dateFallback = new Date().toISOString()
+    const casePages = ['ru', 'en'].flatMap((locale) =>
+      cases.map((c) => ({
+        loc: `${SITE_URL}/${locale}/cases/${c.slug}`,
+        lastmod: c.updatedAt || dateFallback,
+      })),
+    )
 
-    const defaultSitemap = [
-      {
-        loc: `${SITE_URL}/search`,
-        lastmod: dateFallback,
-      },
-      {
-        loc: `${SITE_URL}/posts`,
-        lastmod: dateFallback,
-      },
-    ]
-
-    const sitemap = results.docs
-      ? results.docs
-          .filter((page) => Boolean(page?.slug))
-          .map((page) => {
-            return {
-              loc: page?.slug === 'home' ? `${SITE_URL}/` : `${SITE_URL}/${page?.slug}`,
-              lastmod: page.updatedAt || dateFallback,
-            }
-          })
-      : []
-
-    return [...defaultSitemap, ...sitemap]
+    return [...localePages, ...casePages]
   },
-  ['pages-sitemap'],
-  {
-    tags: ['pages-sitemap'],
-  },
+  ['portfolio-sitemap'],
+  { tags: ['portfolio-sitemap'] },
 )
 
 export async function GET() {
-  const sitemap = await getPagesSitemap()
-
+  const sitemap = await getPortfolioSitemap()
   return getServerSideSitemap(sitemap)
 }

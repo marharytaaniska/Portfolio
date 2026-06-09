@@ -38,6 +38,16 @@ const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
 const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) => ({
   ...defaultConverters,
   ...LinkJSXConverter({ internalDocToHref }),
+  list: ({ node, nodesToJSX }) => {
+    const children = nodesToJSX({ nodes: (node as any).children })
+    if ((node as any).listType === 'number') {
+      return <ol>{children}</ol>
+    }
+    return <ul>{children}</ul>
+  },
+  listitem: ({ node, nodesToJSX }) => {
+    return <li value={(node as any).value}>{nodesToJSX({ nodes: (node as any).children })}</li>
+  },
   blocks: {
     banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,
     mediaBlock: ({ node }) => (

@@ -43,5 +43,11 @@
   "contacts": {
     "copyEmail": "Copy Email",
     "copied": "Copied!"
+  },
+  "caseAccess": {
+    "modalTitle": "A password is required to view this case",
+    "passwordPlaceholder": "Enter password",
+    "continueButtonLabel": "Continue",
+    "invalidPasswordError": "Incorrect password. Please try again."
   }
 }

@@ -3,47 +3,64 @@ import type { CollectionConfig } from 'payload'
 export const Cases: CollectionConfig = {
   slug: 'cases',
   labels: {
-    singular: 'Кейс',
-    plural: 'Кейсы',
+    singular: 'Cases item',
+    plural: 'Cases items',
   },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'niche', 'year', 'is_featured', 'order'],
+    defaultColumns: ['title', 'enabled', 'niche', 'year', 'order'],
     disableDuplicate: false,
   },
   fields: [
-    // ── Основные поля ──────────────────────────────────────────
+    // ── Visibility ────────────────────────────────────────────
     {
-      name: 'title',
-      type: 'text',
-      label: 'Название',
-      required: true,
-      maxLength: 60,
-      localized: true,
+      name: 'enabled',
+      type: 'checkbox',
+      label: 'Published',
+      defaultValue: true,
+      admin: { description: 'Show this case on the website' },
     },
+
+    // ── Name + Slug (same row) ─────────────────────────────────
     {
-      name: 'slug',
-      type: 'text',
-      label: 'Slug',
-      required: true,
-      admin: {
-        description: 'Заполняется автоматически из названия (RU)',
-        readOnly: true,
-      },
-      hooks: {
-        beforeValidate: [
-          ({ value, data, req }) => {
-            // Only regenerate from the default locale to keep slug stable across locales
-            if (req?.locale && req.locale !== 'ru') return value
-            const title = typeof data?.title === 'string' ? data.title : ''
-            if (title) {
-              return title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
-            }
-            return value
+      type: 'row',
+      fields: [
+        {
+          name: 'title',
+          type: 'text',
+          label: 'Название',
+          required: true,
+          maxLength: 60,
+          localized: true,
+          admin: { width: '50%' },
+        },
+        {
+          name: 'slug',
+          type: 'text',
+          label: 'Slug',
+          required: true,
+          admin: {
+            width: '50%',
+            description: 'Заполняется автоматически из названия (RU)',
+            readOnly: true,
           },
-        ],
-      },
+          hooks: {
+            beforeValidate: [
+              ({ value, data, req }) => {
+                if (req?.locale && req.locale !== 'ru') return value
+                const title = typeof data?.title === 'string' ? data.title : ''
+                if (title) {
+                  return title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
+                }
+                return value
+              },
+            ],
+          },
+        },
+      ],
     },
+
+    // ── Cover ─────────────────────────────────────────────────
     {
       name: 'cover',
       type: 'upload',
@@ -51,19 +68,16 @@ export const Cases: CollectionConfig = {
       label: 'Обложка (фото или видео)',
       required: true,
     },
+
+    // ── Client ────────────────────────────────────────────────
     {
-      name: 'niche',
+      name: 'client',
       type: 'text',
-      label: 'Ниша',
-      required: true,
+      label: 'Клиент',
       localized: true,
     },
-    {
-      name: 'year',
-      type: 'number',
-      label: 'Год',
-      required: true,
-    },
+
+    // ── Tags ──────────────────────────────────────────────────
     {
       name: 'tags',
       type: 'relationship',
@@ -72,19 +86,25 @@ export const Cases: CollectionConfig = {
       label: 'Теги',
       required: true,
     },
+
+    // ── Niche ─────────────────────────────────────────────────
     {
-      name: 'order',
-      type: 'number',
-      label: 'Порядок',
-    },
-    {
-      name: 'is_featured',
-      type: 'checkbox',
-      label: 'Избранный',
-      defaultValue: false,
+      name: 'niche',
+      type: 'text',
+      label: 'Ниша',
+      required: true,
+      localized: true,
     },
 
-    // ── Шапка детальной страницы ───────────────────────────────
+    // ── Year ──────────────────────────────────────────────────
+    {
+      name: 'year',
+      type: 'number',
+      label: 'Год',
+      required: true,
+    },
+
+    // ── Description (case header) ──────────────────────────────
     {
       name: 'description',
       type: 'richText',
@@ -92,14 +112,41 @@ export const Cases: CollectionConfig = {
       required: true,
       localized: true,
     },
+
+    // ── Order ─────────────────────────────────────────────────
     {
-      name: 'client',
-      type: 'text',
-      label: 'Клиент',
-      localized: true,
+      name: 'order',
+      type: 'number',
+      label: 'Порядок',
     },
 
-    // ── Конструктор блоков ─────────────────────────────────────
+    // ── Featured ──────────────────────────────────────────────
+    {
+      name: 'is_featured',
+      type: 'checkbox',
+      label: 'Избранный',
+      defaultValue: false,
+    },
+
+    // ── Password Protection ────────────────────────────────────
+    {
+      name: 'password_required',
+      type: 'checkbox',
+      label: 'Password Required',
+      defaultValue: false,
+      admin: { description: 'Protect this case with a password' },
+    },
+    {
+      name: 'password',
+      type: 'text',
+      label: 'Password',
+      admin: {
+        condition: (data) => Boolean(data?.password_required),
+        description: 'Required to view this case',
+      },
+    },
+
+    // ── Content blocks ─────────────────────────────────────────
     {
       name: 'content_blocks',
       type: 'blocks',
@@ -187,18 +234,35 @@ export const Cases: CollectionConfig = {
               label: 'URL ссылки',
               required: true,
             },
+          ],
+        },
+
+        // Блок D: Кнопка
+        {
+          slug: 'button_block',
+          labels: { singular: 'Блок-кнопка', plural: 'Блоки-кнопки' },
+          fields: [
             {
               name: 'button_label',
               type: 'text',
               label: 'Текст кнопки',
+              required: true,
               localized: true,
             },
             {
               name: 'button_url',
               type: 'text',
               label: 'URL кнопки',
+              required: true,
             },
           ],
+        },
+
+        // Блок E: Разделитель
+        {
+          slug: 'divider_block',
+          labels: { singular: 'Разделитель', plural: 'Разделители' },
+          fields: [],
         },
       ],
     },

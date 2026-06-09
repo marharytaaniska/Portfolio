@@ -2,8 +2,18 @@ import type { GlobalConfig } from 'payload'
 
 export const ContactsGlobal: GlobalConfig = {
   slug: 'contacts',
-  label: 'Контакты',
+  label: 'Contacts',
+  admin: {
+    group: 'Homepage content',
+  },
   fields: [
+    {
+      name: 'enabled',
+      type: 'checkbox',
+      label: 'Enabled',
+      defaultValue: true,
+      admin: { description: 'Show this section on the website' },
+    },
     {
       name: 'title',
       type: 'text',

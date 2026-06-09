@@ -16,6 +16,8 @@
 }
 
 :root {
+  scrollbar-gutter: stable;
+
   --ink-900: rgb(13, 30, 44);
   --ink-800: rgb(26, 54, 76);
   --ink-600: rgb(79, 92, 101);
@@ -88,7 +90,7 @@ main { margin-left: var(--rail-w); padding-top: var(--header-h); }
 @media (max-width: 1439px) { .content { padding: 48px var(--page-px); gap: 80px; } }
 @media (min-width: 1024px) and (max-width: 1440px) { :root { --rail-w: 250px; } }
 @media (min-width: 1024px) and (max-width: 1440px) {
-  .bg-grid              { grid-template-columns: 1fr; gap: 48px; }
+  .bg-grid              { grid-template-columns: 1fr !important; gap: 48px !important; }
   .bg-col-edu           { order: 1; grid-row: 1; grid-column: 1; }
   .bg-col-courses       { order: 2; grid-row: 2; grid-column: 1; }
   .exp-grid             { grid-template-columns: 1fr !important; gap: 48px !important; }
@@ -103,7 +105,7 @@ main { margin-left: var(--rail-w); padding-top: var(--header-h); }
   letter-spacing: -0.01em;
 }
 .divider-solid  { height: 1px; background: var(--border); border: none; margin: 0; }
-.divider-dashed { height: 0; border: none; border-top: 1px dashed var(--border); margin: 0; }
+.divider-dashed { height: 0; border: none; border-top: 1px dashed var(--border-default, #E1E1E1); margin: 0; }
 
 /* ── Header ──────────────────────────────────────────────── */
 .site-header {
@@ -287,9 +289,143 @@ main { margin-left: var(--rail-w); padding-top: var(--header-h); }
 @keyframes review-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes review-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
+/* ── Password modal ──────────────────────────────────────── */
+.password-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.password-modal-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(13, 30, 44, 0.45);
+  animation: review-fade .15s ease both;
+}
+.password-modal-panel {
+  position: relative;
+  width: min(480px, 100%);
+  background: var(--white);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  animation: review-rise .15s ease both;
+}
+.password-modal-close {
+  all: unset;
+  position: absolute;
+  top: 24px; right: 24px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-400);
+  transition: color .15s ease;
+}
+.password-modal-close:hover { color: var(--ink-900); }
+
+/* H3 typography, capped width clears close button */
+.password-modal-title {
+  margin: 0;
+  max-width: 380px;
+  padding-right: 36px;
+  font: 400 24px/28px var(--font-display);
+  color: var(--ink-900);
+}
+
+/* Form: gap between the field group and the submit button */
+.password-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Field group: input wrapper + inline error */
+.password-modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Input + eye icon share the same row */
+.password-modal-input-wrap {
+  position: relative;
+}
+.password-modal-input {
+  display: block;
+  width: 100%;
+  padding: 0 40px 10px 0;   /* right: eye icon space; bottom: gap before border */
+  border: none;
+  border-bottom: 1px solid var(--ink-200);
+  background: transparent;
+  color: var(--ink-900);
+  font: 400 18px/26px var(--font-body);
+  outline: none;
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  transition: border-bottom-color .15s ease;
+}
+.password-modal-input::placeholder { color: var(--ink-400); }
+.password-modal-input:focus         { border-bottom-color: var(--ink-900); }
+.password-modal-input--error        { border-bottom-color: var(--accent) !important; }
+
+/* Eye toggle: sits in the text area, not the bottom-padding zone */
+.password-modal-eye {
+  all: unset;
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: calc(100% - 10px); /* exclude bottom padding so it centres over text */
+  width: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-400);
+  transition: color .15s ease;
+}
+.password-modal-eye:hover { color: var(--ink-900); }
+
+.password-modal-error {
+  margin: 0;
+  font: 400 14px/20px var(--font-body);
+  color: var(--accent);
+}
+
+/* Full-width, no horizontal padding, explicit 64px height */
+.password-modal-submit {
+  width: 100%;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  height: 64px !important;
+}
+
+/* ── Password gate (inline, direct URL) ─────────────────── */
+.password-gate {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 48px;
+}
+.password-gate-panel { animation: review-rise .2s ease both; }
+
+@media (max-width: 727px) {
+  .password-modal                 { padding: 16px; }
+  .password-modal-panel           { padding: 24px; gap: 24px; }
+  .password-modal-close           { top: 16px; right: 16px; }
+  .password-modal-form            { gap: 24px; }
+  .password-modal-input           { font: 400 14px/22px var(--font-body); }
+  .password-modal-submit          { height: 48px !important; font: 500 14px/22px var(--font-body) !important; }
+  .password-gate                  { padding-top: 24px; }
+}
+
 /* ── Background ──────────────────────────────────────────── */
 .bg-grid { display: grid; grid-template-columns: 885fr 411fr; gap: 64px; }
 .bg-col  { display: flex; flex-direction: column; gap: 32px; }
+#background .bg-col-edu .payload-richtext p + p { margin-top: 16px; }
 
 /* ── Position header (shared by Background + Experience) ─── */
 .position-header { display: flex; align-items: center; gap: 24px; }
@@ -300,11 +436,14 @@ main { margin-left: var(--rail-w); padding-top: var(--header-h); }
 .position-tags span { font: 400 16px/24px var(--font-body); color: var(--ink-400); }
 
 /* ── Experience ──────────────────────────────────────────── */
+#experience .exp-col .payload-richtext p + p { margin-top: 16px; }
 .exp-list  { display: flex; flex-direction: column; gap: 64px; }
 .exp-entry { display: flex; flex-direction: column; gap: 48px; }
 .exp-grid  { display: grid; grid-template-columns: 885fr 411fr; gap: 64px; }
 .exp-col   { display: flex; flex-direction: column; gap: 24px; }
 .exp-col h3 { margin: 0; font: 400 24px/28px var(--font-display); color: var(--ink-900); }
+button.exp-expand-btn { background: none; border: none; padding: 0; cursor: pointer; font: 400 18px/26px var(--font-body); color: var(--ink-600); text-decoration: underline; text-underline-offset: 2px; text-decoration-thickness: 1px; transition: color .15s ease; align-self: flex-start; }
+button.exp-expand-btn:hover { color: var(--accent); }
 
 /* ── Contacts ────────────────────────────────────────────── */
 .contacts-grid    { display: grid; grid-template-columns: 886fr 411fr; gap: 64px; }
@@ -386,9 +525,10 @@ main { margin-left: var(--rail-w); padding-top: var(--header-h); }
 .btn-md { height: 48px; padding: 10px 24px; font-size: 20px; }
 .btn-sm { height: 24px; padding: 0; font-size: 16px; line-height: 24px; }
 
-.btn-primary { background-color: var(--ink-900); color: var(--white); border-color: transparent; }
-.btn-primary:hover  { background-color: var(--ink-800); color: var(--white); }
-.btn-primary:active { background-color: var(--ink-800); color: var(--white); }
+.btn-primary          { background-color: var(--ink-900); color: var(--white); border-color: transparent; }
+.btn-primary:hover    { background-color: var(--ink-800); color: var(--white); }
+.btn-primary:active   { background-color: var(--ink-800); color: var(--white); }
+.btn-primary:disabled { background-color: var(--ink-200); color: var(--white); cursor: not-allowed; }
 
 .btn-secondary { background-color: transparent; color: var(--ink-900); border-color: var(--ink-200); }
 .btn-secondary:hover { border-color: var(--ink-900); color: #000000; }
@@ -486,12 +626,20 @@ main { margin-left: var(--rail-w); padding-top: var(--header-h); }
 }
 @media (max-width: 727px) { .case-content { gap: 32px; } }
 
-/* Hero: title + description, max 1100px wide */
-.case-hero {
+/* Back button + title + description in one cohesive header group */
+.case-header-group {
   display: flex;
   flex-direction: column;
   gap: 32px;
   max-width: 1100px;
+}
+@media (max-width: 727px) { .case-header-group { gap: 24px; } }
+
+/* Hero: title + description */
+.case-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
 }
 .case-hero-title {
   margin: 0;
@@ -544,13 +692,13 @@ main { margin-left: var(--rail-w); padding-top: var(--header-h); }
   top: 0; bottom: 0;
   right: -32px;
   width: 0;
-  border-left: 1px dashed var(--border);
+  border-left: 1px dashed var(--border-default, #E1E1E1);
 }
 @media (max-width: 1023px) {
   .case-summary { grid-template-columns: 1fr; gap: 32px; }
   .case-summary-cell::after { display: none !important; }
   .case-summary-cell:not(:first-child) {
-    background: linear-gradient(to right, var(--border) 50%, transparent 50%)
+    background: linear-gradient(to right, var(--border-default, #E1E1E1) 50%, transparent 50%)
       top left / 8px 1px repeat-x;
     padding-top: 32px;
   }
@@ -634,9 +782,52 @@ main { margin-left: var(--rail-w); padding-top: var(--header-h); }
   transition: color .15s ease;
 }
 .case-text a:hover { color: var(--accent); }
+ul.case-text,
+ol.case-text       { padding-left: 1.5em; }
+ul.case-text       { list-style-type: disc !important; }
+ol.case-text       { list-style-type: decimal !important; }
+.case-text li      { margin: 0; padding-left: 0.25em; }
+.case-text li::marker { color: inherit; }
+.case-text li + li { margin-top: 8px; }
 @media (max-width: 727px) {
   .case-text { font: 400 13px/20px var(--font-body); }
   .case-hero-desc.case-text { font: 400 14px/22px var(--font-body); }
+}
+
+/* ── Rich Text lists ─────────────────────────────────────── */
+.payload-richtext ul,
+.payload-richtext ol {
+  margin: 0;
+  padding-left: 1.5em;
+}
+/* !important beats Tailwind preflight's "list-style: none" reset in @layer base */
+.payload-richtext ul { list-style-type: disc !important; }
+.payload-richtext ol { list-style-type: decimal !important; }
+.payload-richtext li {
+  font: 400 18px/26px var(--font-body);
+  color: var(--fg-muted);
+  margin: 0;
+  padding-left: 0.25em;
+}
+.payload-richtext li::marker { color: inherit; }
+.payload-richtext li + li   { margin-top: 8px; }
+/* Spacing between paragraphs and lists */
+.payload-richtext p + ul,
+.payload-richtext p + ol  { margin-top: 16px; }
+.payload-richtext ul + p,
+.payload-richtext ol + p  { margin-top: 16px; }
+
+/* Back navigation button — hug content, never full-width */
+.case-back-btn {
+  align-self: flex-start !important;
+}
+@media (max-width: 727px) {
+  .case-back-btn {
+    align-self: stretch !important;
+    width: 100% !important;
+    height: 48px !important;
+    font: 500 14px/22px var(--font-body) !important;
+  }
 }
 
 /* Visit-website CTA button */
@@ -708,6 +899,7 @@ main { margin-left: var(--rail-w); padding-top: var(--header-h); }
   main [style*="20px/28px"]:not(button):not(a) { font: 400 14px/22px var(--font-body) !important; }
   /* Body text (18/26 inline styles) → 13/20 */
   main p:not(.sub), .body,
+  main .payload-richtext li,
   main [style*="18px/26px"]:not(button):not(a) { font: 400 13px/20px var(--font-body) !important; }
   /* Meta text (16/24 inline styles) → 13/20 */
   main [style*="16px/24px"]:not(button):not(a),
@@ -778,6 +970,7 @@ main { margin-left: var(--rail-w); padding-top: var(--header-h); }
   #experience .exp-grid { gap: 28px !important; }
   #experience .exp-col { gap: 20px !important; }
   #experience .exp-list > div > hr { margin-bottom: 32px !important; }
+  button.exp-expand-btn { font: 400 14px/22px var(--font-body) !important; }
 
   /* Contacts — buttons stack full-width */
   .contacts-buttons {
@@ -826,3 +1019,4 @@ main { margin-left: var(--rail-w); padding-top: var(--header-h); }
   .menu-lang > * { width: 100%; }
   .menu-lang .lang-switch button { font: 500 14px/22px var(--font-body) !important; }
 }
+

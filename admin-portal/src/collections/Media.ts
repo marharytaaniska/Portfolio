@@ -17,6 +17,7 @@ const dirname = path.dirname(filename)
 export const Media: CollectionConfig = {
   slug: 'media',
   folders: true,
+  defaultSort: 'filename',
   access: {
     create: authenticated,
     delete: authenticated,

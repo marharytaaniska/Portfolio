@@ -2,8 +2,18 @@ import type { GlobalConfig } from 'payload'
 
 export const HeroGlobal: GlobalConfig = {
   slug: 'hero',
-  label: 'Hero — «Я»',
+  label: 'About',
+  admin: {
+    group: 'Homepage content',
+  },
   fields: [
+    {
+      name: 'enabled',
+      type: 'checkbox',
+      label: 'Enabled',
+      defaultValue: true,
+      admin: { description: 'Show this section on the website' },
+    },
     {
       name: 'avatar',
       type: 'upload',
