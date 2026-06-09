@@ -1,0 +1,47 @@
+{
+  "nav": {
+    "hero": "Я",
+    "cases": "Кейсы",
+    "reviews": "Отзывы",
+    "background": "Бэкграунд",
+    "experience": "Опыт",
+    "contacts": "Контакты"
+  },
+  "header": {
+    "copyEmail": "Copy email",
+    "copied": "Скопировано",
+    "openMenu": "Открыть меню",
+    "closeMenu": "Закрыть меню",
+    "timezone": "+3GMT"
+  },
+  "cases": {
+    "all": "Все",
+    "showMore": "Показать ещё",
+    "projectCount": "{count, plural, one {# проект} few {# проекта} many {# проектов} other {# проектов}}"
+  },
+  "testimonials": {
+    "heading": "Отзывы от коллег и клиентов",
+    "prevLabel": "Предыдущие отзывы",
+    "nextLabel": "Следующие отзывы",
+    "readMore": "Читать полностью",
+    "reviewLabel": "Отзыв",
+    "close": "Закрыть"
+  },
+  "experience": {
+    "relatedCases": "Связанные кейсы"
+  },
+  "background": {
+    "educationFallback": "Вышка",
+    "coursesFallback": "Курсы"
+  },
+  "case": {
+    "client": "Клиент",
+    "services": "Услуги",
+    "industries": "Индустрия",
+    "date": "Год"
+  },
+  "contacts": {
+    "copyEmail": "Copy Email",
+    "copied": "Copied!"
+  }
+}

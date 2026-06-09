@@ -10,22 +10,26 @@ export const ContactsGlobal: GlobalConfig = {
       label: 'Заголовок',
       required: true,
       maxLength: 80,
+      localized: true,
     },
     {
       name: 'description_1',
       type: 'richText',
       label: 'Описание 1',
+      localized: true,
     },
     {
       name: 'description_2',
       type: 'richText',
       label: 'Описание 2',
+      localized: true,
     },
     {
       name: 'button1_label',
       type: 'text',
       label: 'Кнопка 1 — текст',
       required: true,
+      localized: true,
     },
     {
       name: 'button1_url',
@@ -37,6 +41,7 @@ export const ContactsGlobal: GlobalConfig = {
       name: 'button2_label',
       type: 'text',
       label: 'Кнопка 2 — текст',
+      localized: true,
     },
     {
       name: 'button2_url',
@@ -53,6 +58,7 @@ export const ContactsGlobal: GlobalConfig = {
           type: 'text',
           label: 'Текст',
           required: true,
+          localized: true,
         },
         {
           name: 'url',

@@ -1,5 +1,5 @@
 {
-  "name": "marga-portfolio-v2",
+  "name": "admin-portal",
   "version": "1.0.0",
   "description": "Website template for Payload",
   "license": "MIT",
@@ -44,6 +44,7 @@
     "graphql": "^16.8.2",
     "lucide-react": "0.563.0",
     "next": "16.2.6",
+    "next-intl": "^4.0.0",
     "next-sitemap": "^4.2.3",
     "payload": "3.85.0",
     "prism-react-renderer": "^2.3.1",

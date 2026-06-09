@@ -9,6 +9,7 @@ export const Cases: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'niche', 'year', 'is_featured', 'order'],
+    disableDuplicate: false,
   },
   fields: [
     // ── Основные поля ──────────────────────────────────────────
@@ -18,6 +19,7 @@ export const Cases: CollectionConfig = {
       label: 'Название',
       required: true,
       maxLength: 60,
+      localized: true,
     },
     {
       name: 'slug',
@@ -25,17 +27,17 @@ export const Cases: CollectionConfig = {
       label: 'Slug',
       required: true,
       admin: {
-        description: 'Заполняется автоматически из названия',
+        description: 'Заполняется автоматически из названия (RU)',
         readOnly: true,
       },
       hooks: {
         beforeValidate: [
-          ({ value, data }) => {
-            if (data?.title) {
-              return data.title
-                .toLowerCase()
-                .replace(/\s+/g, '-')
-                .replace(/[^\w-]/g, '')
+          ({ value, data, req }) => {
+            // Only regenerate from the default locale to keep slug stable across locales
+            if (req?.locale && req.locale !== 'ru') return value
+            const title = typeof data?.title === 'string' ? data.title : ''
+            if (title) {
+              return title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
             }
             return value
           },
@@ -54,6 +56,7 @@ export const Cases: CollectionConfig = {
       type: 'text',
       label: 'Ниша',
       required: true,
+      localized: true,
     },
     {
       name: 'year',
@@ -87,23 +90,13 @@ export const Cases: CollectionConfig = {
       type: 'richText',
       label: 'Описание (шапка кейса)',
       required: true,
+      localized: true,
     },
     {
       name: 'client',
       type: 'text',
       label: 'Клиент',
-    },
-    {
-      name: 'services',
-      type: 'relationship',
-      relationTo: 'tags',
-      hasMany: true,
-      label: 'Услуги',
-    },
-    {
-      name: 'date',
-      type: 'text',
-      label: 'Дата (свободный формат)',
+      localized: true,
     },
 
     // ── Конструктор блоков ─────────────────────────────────────
@@ -128,6 +121,7 @@ export const Cases: CollectionConfig = {
               name: 'title',
               type: 'text',
               label: 'Заголовок',
+              localized: true,
               admin: {
                 condition: (_, siblingData) => siblingData?.has_title,
               },
@@ -141,6 +135,7 @@ export const Cases: CollectionConfig = {
                   name: 'content',
                   type: 'richText',
                   label: 'Текст абзаца',
+                  localized: true,
                 },
               ],
             },
@@ -169,6 +164,7 @@ export const Cases: CollectionConfig = {
               name: 'caption',
               type: 'text',
               label: 'Подпись',
+              localized: true,
             },
           ],
         },
@@ -183,6 +179,7 @@ export const Cases: CollectionConfig = {
               type: 'text',
               label: 'Текст ссылки',
               required: true,
+              localized: true,
             },
             {
               name: 'link_url',
@@ -194,6 +191,7 @@ export const Cases: CollectionConfig = {
               name: 'button_label',
               type: 'text',
               label: 'Текст кнопки',
+              localized: true,
             },
             {
               name: 'button_url',

@@ -10,11 +10,13 @@ export const BackgroundGlobal: GlobalConfig = {
       type: 'text',
       label: 'Заголовок секции',
       required: true,
+      localized: true,
     },
     {
       name: 'section_description',
       type: 'richText',
       label: 'Описание секции',
+      localized: true,
     },
 
     // ── Высшее образование ──────────────────────────────────────
@@ -28,6 +30,7 @@ export const BackgroundGlobal: GlobalConfig = {
           type: 'text',
           label: 'Лейбл',
           required: true,
+          localized: true,
         },
         {
           name: 'edu_image',
@@ -40,12 +43,14 @@ export const BackgroundGlobal: GlobalConfig = {
           type: 'text',
           label: 'Университет',
           required: true,
+          localized: true,
         },
         {
           name: 'edu_specialty',
           type: 'text',
           label: 'Специальность',
           required: true,
+          localized: true,
         },
         {
           name: 'edu_year',
@@ -57,6 +62,51 @@ export const BackgroundGlobal: GlobalConfig = {
           name: 'edu_description',
           type: 'richText',
           label: 'Описание',
+          localized: true,
+        },
+      ],
+    },
+
+    // ── Курсы ────────────────────────────────────────────────────
+    {
+      name: 'courses_label',
+      type: 'text',
+      label: 'Лейбл раздела курсов',
+      defaultValue: 'Курсы',
+      localized: true,
+    },
+    {
+      name: 'courses',
+      type: 'array',
+      label: 'Курсы',
+      admin: {
+        description: 'Список курсов и сертификатов',
+      },
+      fields: [
+        {
+          name: 'provider',
+          type: 'text',
+          label: 'Провайдер',
+          required: true,
+          localized: true,
+        },
+        {
+          name: 'course_name',
+          type: 'text',
+          label: 'Название курса',
+          required: true,
+          localized: true,
+        },
+        {
+          name: 'year',
+          type: 'number',
+          label: 'Год',
+          required: true,
+        },
+        {
+          name: 'order',
+          type: 'number',
+          label: 'Порядок',
         },
       ],
     },

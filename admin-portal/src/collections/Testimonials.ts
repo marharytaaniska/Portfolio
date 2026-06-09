@@ -9,6 +9,7 @@ export const Testimonials: CollectionConfig = {
   admin: {
     useAsTitle: 'author_name',
     defaultColumns: ['author_name', 'author_description', 'order'],
+    disableDuplicate: false,
   },
   fields: [
     {
@@ -16,7 +17,7 @@ export const Testimonials: CollectionConfig = {
       type: 'richText',
       label: 'Текст отзыва',
       required: true,
-      // maxLength: 3000 — применяется на уровне валидации фронта
+      localized: true,
     },
     {
       name: 'author_name',
@@ -29,6 +30,7 @@ export const Testimonials: CollectionConfig = {
       type: 'text',
       label: 'Описание автора',
       required: true,
+      localized: true,
     },
     {
       name: 'order',

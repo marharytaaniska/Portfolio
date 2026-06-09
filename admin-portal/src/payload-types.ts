@@ -72,7 +72,6 @@ export interface Config {
     tags: Tag;
     cases: Case;
     testimonials: Testimonial;
-    courses: Course;
     experience: Experience;
     'payload-kv': PayloadKv;
     'payload-folders': FolderInterface;
@@ -91,7 +90,6 @@ export interface Config {
     tags: TagsSelect<false> | TagsSelect<true>;
     cases: CasesSelect<false> | CasesSelect<true>;
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
-    courses: CoursesSelect<false> | CoursesSelect<true>;
     experience: ExperienceSelect<false> | ExperienceSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-folders': PayloadFoldersSelect<false> | PayloadFoldersSelect<true>;
@@ -102,24 +100,30 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: null;
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('ru' | 'en') | ('ru' | 'en')[];
   globals: {
     header: Header;
     footer: Footer;
     hero: Hero;
+    'relevant-cases-section': RelevantCasesSection;
     'testimonials-section': TestimonialsSection;
     background: Background;
     contacts: Contact;
+    'experience-section': ExperienceSection;
+    'site-settings': SiteSetting;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
     hero: HeroSelect<false> | HeroSelect<true>;
+    'relevant-cases-section': RelevantCasesSectionSelect<false> | RelevantCasesSectionSelect<true>;
     'testimonials-section': TestimonialsSectionSelect<false> | TestimonialsSectionSelect<true>;
     background: BackgroundSelect<false> | BackgroundSelect<true>;
     contacts: ContactsSelect<false> | ContactsSelect<true>;
+    'experience-section': ExperienceSectionSelect<false> | ExperienceSectionSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
   };
-  locale: null;
+  locale: 'ru' | 'en';
   widgets: {
     collections: CollectionsWidget;
   };
@@ -300,7 +304,11 @@ export interface Tag {
   id: number;
   tag_name: string;
   /**
-   * Заполняется автоматически из названия
+   * Меньшее число — раньше в списке вкладок
+   */
+  order?: number | null;
+  /**
+   * Заполняется автоматически из названия (RU)
    */
   tag_slug?: string | null;
   updatedAt: string;
@@ -314,7 +322,7 @@ export interface Case {
   id: number;
   title: string;
   /**
-   * Заполняется автоматически из названия
+   * Заполняется автоматически из названия (RU)
    */
   slug: string;
   cover: number | Media;
@@ -339,8 +347,6 @@ export interface Case {
     [k: string]: unknown;
   };
   client?: string | null;
-  services?: (number | Tag)[] | null;
-  date?: string | null;
   content_blocks: (
     | {
         has_title?: boolean | null;
@@ -417,20 +423,6 @@ export interface Testimonial {
   };
   author_name: string;
   author_description: string;
-  order?: number | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "courses".
- */
-export interface Course {
-  id: number;
-  courses_label: string;
-  provider: string;
-  course_name: string;
-  year: number;
   order?: number | null;
   updatedAt: string;
   createdAt: string;
@@ -519,10 +511,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'testimonials';
         value: number | Testimonial;
-      } | null)
-    | ({
-        relationTo: 'courses';
-        value: number | Course;
       } | null)
     | ({
         relationTo: 'experience';
@@ -697,6 +685,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface TagsSelect<T extends boolean = true> {
   tag_name?: T;
+  order?: T;
   tag_slug?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -716,8 +705,6 @@ export interface CasesSelect<T extends boolean = true> {
   is_featured?: T;
   description?: T;
   client?: T;
-  services?: T;
-  date?: T;
   content_blocks?:
     | T
     | {
@@ -770,19 +757,6 @@ export interface TestimonialsSelect<T extends boolean = true> {
   text?: T;
   author_name?: T;
   author_description?: T;
-  order?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "courses_select".
- */
-export interface CoursesSelect<T extends boolean = true> {
-  courses_label?: T;
-  provider?: T;
-  course_name?: T;
-  year?: T;
   order?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -928,13 +902,35 @@ export interface Hero {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "relevant-cases-section".
+ */
+export interface RelevantCasesSection {
+  id: number;
+  section_title: string;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "testimonials-section".
  */
 export interface TestimonialsSection {
   id: number;
-  section_description?: string | null;
-  section_link_label?: string | null;
-  section_link_url?: string | null;
+  section_content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -982,6 +978,19 @@ export interface Background {
       [k: string]: unknown;
     } | null;
   };
+  courses_label?: string | null;
+  /**
+   * Список курсов и сертификатов
+   */
+  courses?:
+    | {
+        provider: string;
+        course_name: string;
+        year: number;
+        order?: number | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1033,6 +1042,77 @@ export interface Contact {
         id?: string | null;
       }[]
     | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "experience-section".
+ */
+export interface ExperienceSection {
+  id: number;
+  section_title: string;
+  section_description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  style?: {
+    heading_color?: ('var(--ink-900)' | 'var(--ink-800)' | 'var(--ink-600)' | 'var(--accent)') | null;
+    body_color?: ('var(--ink-900)' | 'var(--ink-600)' | 'var(--ink-400)') | null;
+    meta_color?: ('var(--ink-600)' | 'var(--ink-400)' | 'var(--ink-300)') | null;
+    link_color?: ('var(--ink-600)' | 'var(--ink-900)' | 'var(--accent)') | null;
+    /**
+     * Вертикальный отступ между карточками опыта работы
+     */
+    entry_gap?: number | null;
+    /**
+     * Отступ между шапкой (логотип + должность) и блоком обязанностей
+     */
+    inner_gap?: number | null;
+    /**
+     * Горизонтальный отступ между колонкой обязанностей и колонкой кейсов
+     */
+    col_gap?: number | null;
+    /**
+     * Ширина левой колонки (обязанности) в % от общей ширины. Правая колонка (кейсы) займёт остаток.
+     */
+    responsibilities_ratio?: number | null;
+    /**
+     * Ширина и высота квадратного логотипа в шапке записи
+     */
+    logo_size?: number | null;
+    section_title_size?: ('32px' | '40px' | '48px') | null;
+    body_font_size?: ('16px' | '18px' | '20px') | null;
+    divider_style?: ('dashed' | 'solid' | 'none') | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  /**
+   * URL, который открывается при нажатии кнопок «CV» и «Download CV» по всему сайту.
+   */
+  cv_url?: string | null;
+  /**
+   * Этот адрес копируется в буфер обмена при нажатии «Copy Email» (в шапке, меню и разделе Контакты).
+   */
+  contact_email?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1100,12 +1180,20 @@ export interface HeroSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "relevant-cases-section_select".
+ */
+export interface RelevantCasesSectionSelect<T extends boolean = true> {
+  section_title?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "testimonials-section_select".
  */
 export interface TestimonialsSectionSelect<T extends boolean = true> {
-  section_description?: T;
-  section_link_label?: T;
-  section_link_url?: T;
+  section_content?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1126,6 +1214,16 @@ export interface BackgroundSelect<T extends boolean = true> {
         edu_specialty?: T;
         edu_year?: T;
         edu_description?: T;
+      };
+  courses_label?: T;
+  courses?:
+    | T
+    | {
+        provider?: T;
+        course_name?: T;
+        year?: T;
+        order?: T;
+        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -1150,6 +1248,44 @@ export interface ContactsSelect<T extends boolean = true> {
         url?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "experience-section_select".
+ */
+export interface ExperienceSectionSelect<T extends boolean = true> {
+  section_title?: T;
+  section_description?: T;
+  style?:
+    | T
+    | {
+        heading_color?: T;
+        body_color?: T;
+        meta_color?: T;
+        link_color?: T;
+        entry_gap?: T;
+        inner_gap?: T;
+        col_gap?: T;
+        responsibilities_ratio?: T;
+        logo_size?: T;
+        section_title_size?: T;
+        body_font_size?: T;
+        divider_style?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  cv_url?: T;
+  contact_email?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

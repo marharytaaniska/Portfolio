@@ -9,6 +9,8 @@ export const Experience: CollectionConfig = {
   admin: {
     useAsTitle: 'position_title',
     defaultColumns: ['position_title', 'company_name', 'period', 'order'],
+    disableDuplicate: false,
+    group: 'Опыт',
   },
   fields: [
     {
@@ -22,6 +24,7 @@ export const Experience: CollectionConfig = {
       type: 'text',
       label: 'Должность',
       required: true,
+      localized: true,
     },
     {
       name: 'company_name',
@@ -34,18 +37,21 @@ export const Experience: CollectionConfig = {
       type: 'text',
       label: 'Период (свободный формат)',
       required: true,
+      localized: true,
     },
     {
       name: 'responsibilities_title',
       type: 'text',
       label: 'Заголовок блока обязанностей',
       defaultValue: 'Обязанности и достижения',
+      localized: true,
     },
     {
       name: 'responsibilities',
       type: 'richText',
       label: 'Обязанности и достижения',
       required: true,
+      localized: true,
     },
     {
       name: 'links',
@@ -58,6 +64,7 @@ export const Experience: CollectionConfig = {
           type: 'text',
           label: 'Текст ссылки',
           required: true,
+          localized: true,
         },
         {
           name: 'url',

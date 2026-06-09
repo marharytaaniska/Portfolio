@@ -9,6 +9,7 @@ export const Courses: CollectionConfig = {
   admin: {
     useAsTitle: 'course_name',
     defaultColumns: ['course_name', 'provider', 'year', 'order'],
+    disableDuplicate: false,
   },
   fields: [
     {

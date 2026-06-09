@@ -13,23 +13,26 @@ export const HeroGlobal: GlobalConfig = {
     },
     {
       name: 'title',
-      type: 'text',
+      type: 'textarea',
       label: 'Заголовок',
       required: true,
       maxLength: 80,
+      localized: true,
     },
     {
       name: 'subtitle',
       type: 'text',
       label: 'Подзаголовок',
       required: true,
-      maxLength: 120,
+      maxLength: 500,
+      localized: true,
     },
     {
       name: 'button1_label',
       type: 'text',
       label: 'Кнопка 1 — текст',
       required: true,
+      localized: true,
     },
     {
       name: 'button1_url',
@@ -41,6 +44,7 @@ export const HeroGlobal: GlobalConfig = {
       name: 'button2_label',
       type: 'text',
       label: 'Кнопка 2 — текст',
+      localized: true,
     },
     {
       name: 'button2_url',

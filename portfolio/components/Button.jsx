@@ -89,8 +89,10 @@ function Button({
   if (state !== "disabled" && (isHover || isDown)) {
     if (accent === "primary") {
       computed.backgroundColor = "var(--ink-800)";
+      computed.color = "#FFFFFF";
     } else if (accent === "secondary") {
       computed.borderColor = "var(--ink-900)";
+      computed.color = "#000000";
     } else if (accent === "ghost") {
       // Borderless header buttons hover to ink-900 (deep navy).
       computed.color = "var(--ink-900)";

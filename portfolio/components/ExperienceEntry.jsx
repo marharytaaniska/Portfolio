@@ -3,7 +3,7 @@
 // Logo sits to the RIGHT of the heading (Figma uses a mirrored transform to achieve this);
 // here we just place it explicitly.
 
-function PositionHeader({ title, tag, year, logo }) {
+function PositionHeader({ title, tag, year, logo, titleFont = "400 30px/36px var(--font-display)", TitleTag = "h2" }) {
   return (
     <div
       className="position-header"
@@ -26,9 +26,9 @@ function PositionHeader({ title, tag, year, logo }) {
         }}
       />
       <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1, minWidth: 0 }}>
-        <h2 style={{ margin: 0, font: "400 30px/36px var(--font-display)", color: "var(--ink-900)" }}>
+        <TitleTag style={{ margin: 0, font: titleFont, color: "var(--ink-900)" }}>
           {title}
-        </h2>
+        </TitleTag>
         <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", columnGap: 4, rowGap: 0 }}>
           <span style={{ font: "400 16px/24px var(--font-body)", color: "var(--ink-400)" }}>{tag}</span>
           <span style={{ display: "inline-flex", alignItems: "center", gap: 4, font: "400 16px/24px var(--font-body)", color: "var(--ink-400)" }}>

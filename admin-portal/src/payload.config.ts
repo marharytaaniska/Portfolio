@@ -12,7 +12,6 @@ import { Users } from './collections/Users'
 import { Tags } from './collections/Tags'
 import { Cases } from './collections/Cases'
 import { Testimonials } from './collections/Testimonials'
-import { Courses } from './collections/Courses'
 import { Experience } from './collections/Experience'
 
 // Шаблонные глобалы (оставляем)
@@ -21,9 +20,12 @@ import { Footer } from './Footer/config'
 
 // Новые глобалы из ТЗ
 import { HeroGlobal } from './collections/HeroGlobal'
+import { RelevantCasesGlobal } from './collections/RelevantCasesGlobal'
 import { TestimonialsGlobal } from './collections/TestimonialsGlobal'
 import { BackgroundGlobal } from './collections/BackgroundGlobal'
 import { ContactsGlobal } from './collections/ContactsGlobal'
+import { ExperienceGlobal } from './collections/ExperienceGlobal'
+import { SiteSettingsGlobal } from './collections/SiteSettingsGlobal'
 
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
@@ -33,6 +35,14 @@ const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export default buildConfig({
+  localization: {
+    locales: [
+      { label: 'Русский', code: 'ru' },
+      { label: 'English', code: 'en' },
+    ],
+    defaultLocale: 'ru',
+    fallback: true,
+  },
   admin: {
     components: {
       beforeLogin: ['@/components/BeforeLogin'],
@@ -79,7 +89,6 @@ export default buildConfig({
     Tags,
     Cases,
     Testimonials,
-    Courses,
     Experience,
   ],
   globals: [
@@ -88,9 +97,12 @@ export default buildConfig({
     Footer,
     // Из ТЗ
     HeroGlobal,
+    RelevantCasesGlobal,
     TestimonialsGlobal,
     BackgroundGlobal,
     ContactsGlobal,
+    ExperienceGlobal,
+    SiteSettingsGlobal,
   ],
   cors: [getServerSideURL()].filter(Boolean),
   plugins,

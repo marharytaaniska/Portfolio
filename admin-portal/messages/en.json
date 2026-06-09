@@ -1,0 +1,47 @@
+{
+  "nav": {
+    "hero": "Me",
+    "cases": "Cases",
+    "reviews": "Reviews",
+    "background": "Background",
+    "experience": "Experience",
+    "contacts": "Contacts"
+  },
+  "header": {
+    "copyEmail": "Copy email",
+    "copied": "Copied!",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "timezone": "+3GMT"
+  },
+  "cases": {
+    "all": "All",
+    "showMore": "Show more",
+    "projectCount": "{count, plural, one {# project} other {# projects}}"
+  },
+  "testimonials": {
+    "heading": "Reviews from colleagues and clients",
+    "prevLabel": "Previous reviews",
+    "nextLabel": "Next reviews",
+    "readMore": "Read more",
+    "reviewLabel": "Review",
+    "close": "Close"
+  },
+  "experience": {
+    "relatedCases": "Related cases"
+  },
+  "background": {
+    "educationFallback": "Education",
+    "coursesFallback": "Courses"
+  },
+  "case": {
+    "client": "Client",
+    "services": "Services",
+    "industries": "Industries",
+    "date": "Date"
+  },
+  "contacts": {
+    "copyEmail": "Copy Email",
+    "copied": "Copied!"
+  }
+}
