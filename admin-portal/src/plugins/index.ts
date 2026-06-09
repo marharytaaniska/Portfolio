@@ -7,7 +7,7 @@ export const plugins: Plugin[] = [
   vercelBlobStorage({
     enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
     collections: {
-      media: true,
+      media: { disablePayloadAccessControl: true },
     },
     token: process.env.BLOB_READ_WRITE_TOKEN || '',
     clientUploads: true,

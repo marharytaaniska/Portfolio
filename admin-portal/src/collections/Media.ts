@@ -42,7 +42,6 @@ export const Media: CollectionConfig = {
   ],
   upload: {
     staticDir: path.resolve(dirname, '../../public/media'),
-    disablePayloadAccessControl: true,
     adminThumbnail: 'thumbnail',
     focalPoint: true,
     imageSizes: [
