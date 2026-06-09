@@ -87,19 +87,3 @@ export default async function CasePage({ params: paramsPromise }: Args) {
   )
 }
 
-export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const { docs } = await payload.find({
-    collection: 'cases',
-    limit: 1000,
-    depth: 0,
-    where: {
-      and: [
-        { enabled: { equals: true } },
-        { password_required: { not_equals: true } },
-      ],
-    },
-  })
-
-  return routing.locales.flatMap((locale) => docs.map((c) => ({ locale, slug: c.slug })))
-}
