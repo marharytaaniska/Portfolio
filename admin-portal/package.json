@@ -89,7 +89,9 @@
     "onlyBuiltDependencies": [
       "sharp",
       "esbuild",
-      "unrs-resolver"
+      "unrs-resolver",
+      "@swc/core",
+      "@parcel/watcher"
     ]
   }
 }
