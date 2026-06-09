@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { notFound } from 'next/navigation'
 import { cookies } from 'next/headers'
 import configPromise from '@payload-config'
