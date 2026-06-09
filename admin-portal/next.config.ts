@@ -67,9 +67,6 @@ const nextConfig: NextConfig = {
       },
     ]
   },
-  turbopack: {
-    root: path.resolve(dirname),
-  },
 }
 
 export default withNextIntl(withPayload(nextConfig, { devBundleServerPackages: false }))
