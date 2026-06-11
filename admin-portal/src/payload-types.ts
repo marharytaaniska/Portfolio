@@ -111,6 +111,7 @@ export interface Config {
     contacts: Contact;
     'case-detail-page': CaseDetailPage;
     'case-access': CaseAccess;
+    'not-found-page': NotFoundPage;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
@@ -122,6 +123,7 @@ export interface Config {
     contacts: ContactsSelect<false> | ContactsSelect<true>;
     'case-detail-page': CaseDetailPageSelect<false> | CaseDetailPageSelect<true>;
     'case-access': CaseAccessSelect<false> | CaseAccessSelect<true>;
+    'not-found-page': NotFoundPageSelect<false> | NotFoundPageSelect<true>;
   };
   locale: 'ru' | 'en';
   widgets: {
@@ -326,7 +328,7 @@ export interface Case {
   enabled?: boolean | null;
   title: string;
   /**
-   * Заполняется автоматически из названия (RU)
+   * Заполняется автоматически из названия. Можно редактировать вручную.
    */
   slug: string;
   cover: number | Media;
@@ -419,6 +421,10 @@ export interface Case {
         blockType: 'divider_block';
       }
   )[];
+  /**
+   * Select up to 2 cases to show in the Related Cases section
+   */
+  related_cases?: (number | Case)[] | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -478,6 +484,9 @@ export interface Experience {
   links?:
     | {
         label: string;
+        /**
+         * External URL (https://…) or anchor link (#section, /#section)
+         */
         url: string;
         id?: string | null;
       }[]
@@ -783,6 +792,7 @@ export interface CasesSelect<T extends boolean = true> {
               blockName?: T;
             };
       };
+  related_cases?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -945,6 +955,7 @@ export interface TestimonialsSection {
    */
   enabled?: boolean | null;
   section_title?: string | null;
+  read_more_label?: string | null;
   section_content?: {
     root: {
       type: string;
@@ -1124,6 +1135,36 @@ export interface CaseDetailPage {
   label_industries: string;
   label_date: string;
   back_label?: string | null;
+  /**
+   * Heading displayed above the Related Cases section
+   */
+  related_cases_title?: string | null;
+  /**
+   * Optional text displayed below the Related Cases heading
+   */
+  related_cases_description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Label for the button next to the Related Cases heading
+   */
+  related_cases_button_label?: string | null;
+  /**
+   * Anchor or path the button links to (e.g. /#cases)
+   */
+  related_cases_button_url?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1137,6 +1178,19 @@ export interface CaseAccess {
   password_placeholder?: string | null;
   continue_button_label?: string | null;
   invalid_password_error?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "not-found-page".
+ */
+export interface NotFoundPage {
+  id: number;
+  title: string;
+  description: string;
+  button_label: string;
+  button_url: string;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1206,6 +1260,7 @@ export interface RelevantCasesSectionSelect<T extends boolean = true> {
 export interface TestimonialsSectionSelect<T extends boolean = true> {
   enabled?: T;
   section_title?: T;
+  read_more_label?: T;
   section_content?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1291,6 +1346,10 @@ export interface CaseDetailPageSelect<T extends boolean = true> {
   label_industries?: T;
   label_date?: T;
   back_label?: T;
+  related_cases_title?: T;
+  related_cases_description?: T;
+  related_cases_button_label?: T;
+  related_cases_button_url?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1304,6 +1363,19 @@ export interface CaseAccessSelect<T extends boolean = true> {
   password_placeholder?: T;
   continue_button_label?: T;
   invalid_password_error?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "not-found-page_select".
+ */
+export interface NotFoundPageSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  button_label?: T;
+  button_url?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

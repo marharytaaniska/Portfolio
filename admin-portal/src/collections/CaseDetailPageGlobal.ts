@@ -42,5 +42,41 @@ export const CaseDetailPageGlobal: GlobalConfig = {
       required: false,
       localized: true,
     },
+    {
+      name: 'related_cases_title',
+      type: 'text',
+      label: 'Related Cases Title',
+      localized: true,
+      defaultValue: 'Related Cases',
+      admin: {
+        description: 'Heading displayed above the Related Cases section',
+      },
+    },
+    {
+      name: 'related_cases_description',
+      type: 'richText',
+      label: 'Related Cases Description',
+      localized: true,
+      admin: {
+        description: 'Optional text displayed below the Related Cases heading',
+      },
+    },
+    {
+      name: 'related_cases_button_label',
+      type: 'text',
+      label: 'Related Cases Button Label',
+      localized: true,
+      admin: {
+        description: 'Label for the button next to the Related Cases heading',
+      },
+    },
+    {
+      name: 'related_cases_button_url',
+      type: 'text',
+      label: 'Related Cases Button URL',
+      admin: {
+        description: 'Anchor or path the button links to (e.g. /#cases)',
+      },
+    },
   ],
 }

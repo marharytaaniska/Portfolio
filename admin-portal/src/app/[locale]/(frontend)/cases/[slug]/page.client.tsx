@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useLayoutEffect } from 'react'
 import { SiteHeader } from '@/components/SiteHeader'
 import { SideNav } from '@/components/SideNav'
 import { MenuOverlay } from '@/components/MenuOverlay'
@@ -14,6 +14,14 @@ interface CasePageShellProps {
 
 export function CasePageShell({ children, navData }: CasePageShellProps) {
   const [menuOpen, setMenuOpen] = React.useState(false)
+
+  useLayoutEffect(() => {
+    document.documentElement.style.scrollBehavior = 'auto'
+    window.scrollTo(0, 0)
+    requestAnimationFrame(() => {
+      document.documentElement.style.scrollBehavior = ''
+    })
+  }, [])
   const locale = useLocale()
 
   const navigateHome = (anchor: string) => {

@@ -56,20 +56,16 @@ function MenuOverlay({
           </div>
 
           <nav className="menu-items">
-            {items.map((label) => {
-              const isActive = label === active;
-              return (
-                <a
-                  key={label}
-                  href={`#${label}`}
-                  onClick={(e) => { e.preventDefault(); handleSelect(label); }}
-                  className={isActive ? "menu-item is-active" : "menu-item"}
-                >
-                  <span>{label}</span>
-                  {isActive ? <LiveDot /> : null}
-                </a>
-              );
-            })}
+            {items.map((label) => (
+              <a
+                key={label}
+                href={`#${label}`}
+                onClick={(e) => { e.preventDefault(); handleSelect(label); }}
+                className="menu-item"
+              >
+                <span>{label}</span>
+              </a>
+            ))}
           </nav>
 
           {/* Mobile-only — CV / Copy email get moved into the menu, since the

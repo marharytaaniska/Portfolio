@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { transliterate } from '@/utilities/transliterate'
 
 export const Cases: CollectionConfig = {
   slug: 'cases',
@@ -41,16 +42,20 @@ export const Cases: CollectionConfig = {
           required: true,
           admin: {
             width: '50%',
-            description: 'Заполняется автоматически из названия (RU)',
-            readOnly: true,
+            description: 'Заполняется автоматически из названия. Можно редактировать вручную.',
           },
           hooks: {
             beforeValidate: [
               ({ value, data, req }) => {
                 if (req?.locale && req.locale !== 'ru') return value
+                // Only auto-generate when the slug is empty (preserve manual edits)
+                if (value) return value
                 const title = typeof data?.title === 'string' ? data.title : ''
                 if (title) {
-                  return title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
+                  return transliterate(title)
+                    .toLowerCase()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^\w-]/g, '')
                 }
                 return value
               },
@@ -265,6 +270,19 @@ export const Cases: CollectionConfig = {
           fields: [],
         },
       ],
+    },
+
+    // ── Related Cases ──────────────────────────────────────────
+    {
+      name: 'related_cases',
+      type: 'relationship',
+      label: 'Related Cases',
+      relationTo: 'cases',
+      hasMany: true,
+      filterOptions: ({ id }) => ({ id: { not_in: [id] } }),
+      admin: {
+        description: 'Select up to 2 cases to show in the Related Cases section',
+      },
     },
   ],
 }

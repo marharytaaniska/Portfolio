@@ -5,7 +5,6 @@ import { useTranslations } from 'next-intl'
 import { useCopyToClipboard } from '@/utilities/useCopyToClipboard'
 import { Button } from './Button'
 import { LanguageSwitch } from './LanguageSwitch'
-import { LiveDot } from './LiveDot'
 
 interface NavItem {
   label: string
@@ -107,24 +106,20 @@ export function MenuOverlay({
           </div>
 
           <nav className="menu-items">
-            {items.map((item) => {
-              const isActive = item.anchor === active
-              return (
-                <a
-                  key={item.anchor}
-                  href={`#${item.anchor}`}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    onSelect?.(item.anchor)
-                    onClose()
-                  }}
-                  className={isActive ? 'menu-item is-active' : 'menu-item'}
-                >
-                  <span>{item.label}</span>
-                  {isActive && <LiveDot />}
-                </a>
-              )
-            })}
+            {items.map((item) => (
+              <a
+                key={item.anchor}
+                href={`#${item.anchor}`}
+                onClick={(e) => {
+                  e.preventDefault()
+                  onSelect?.(item.anchor)
+                  onClose()
+                }}
+                className="menu-item"
+              >
+                <span>{item.label}</span>
+              </a>
+            ))}
           </nav>
 
           <div className="menu-cta-block">

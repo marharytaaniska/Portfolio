@@ -12,10 +12,11 @@ interface ReviewData {
 
 interface ReviewCardProps extends ReviewData {
   lines?: number
+  readMoreLabel?: string
   onReadMore?: (review: ReviewData) => void
 }
 
-export function ReviewCard({ quote, author, role, lines = 5, onReadMore }: ReviewCardProps) {
+export function ReviewCard({ quote, author, role, lines = 5, readMoreLabel, onReadMore }: ReviewCardProps) {
   const t = useTranslations('testimonials')
   const quoteRef = React.useRef<HTMLParagraphElement>(null)
   const [overflowing, setOverflowing] = React.useState(false)
@@ -67,7 +68,7 @@ export function ReviewCard({ quote, author, role, lines = 5, onReadMore }: Revie
             className="review-readmore"
             onClick={() => onReadMore({ quote, author, role })}
           >
-            {t('readMore')}
+            {readMoreLabel || t('readMore')}
           </button>
         )}
       </div>

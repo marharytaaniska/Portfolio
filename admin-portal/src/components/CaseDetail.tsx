@@ -5,7 +5,9 @@ import { getMediaUrl } from '@/utilities/getMediaUrl'
 import { Button } from '@/components/Button'
 import { BackButton } from '@/components/BackButton'
 import { ContactsSection } from '@/components/ContactsSection'
+import { RelatedCasesSection } from '@/components/RelatedCasesSection'
 import { Link } from '@/i18n/navigation'
+import type { CaseAccessLabels } from '@/components/PasswordModal'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Lightweight Lexical JSON → React renderer
@@ -208,9 +210,15 @@ interface CaseDetailContentProps {
   caseDoc: Case
   contacts: Contact
   labels?: CaseDetailLabels
+  relatedCases?: Case[]
+  relatedCasesTitle?: string
+  relatedCasesDescription?: LexicalDoc | null
+  relatedCasesButtonLabel?: string
+  relatedCasesButtonUrl?: string
+  caseAccessLabels?: CaseAccessLabels
 }
 
-export async function CaseDetailContent({ caseDoc, contacts, labels }: CaseDetailContentProps) {
+export async function CaseDetailContent({ caseDoc, contacts, labels, relatedCases, relatedCasesTitle, relatedCasesDescription, relatedCasesButtonLabel, relatedCasesButtonUrl, caseAccessLabels }: CaseDetailContentProps) {
   const cover = typeof caseDoc.cover === 'object' ? (caseDoc.cover as Media) : null
   const tags = (caseDoc.tags as Tag[]).filter((tag): tag is Tag => typeof tag === 'object')
 
@@ -315,6 +323,25 @@ export async function CaseDetailContent({ caseDoc, contacts, labels }: CaseDetai
           return null
         })}
       </div>
+
+      {relatedCases && relatedCases.length > 0 && (
+        <hr className="divider-solid" />
+      )}
+
+      {relatedCases && relatedCases.length > 0 && (
+        <RelatedCasesSection
+          title={relatedCasesTitle ?? 'Related Cases'}
+          cases={relatedCases}
+          caseAccessLabels={caseAccessLabels}
+          description={
+            relatedCasesDescription ? (
+              <LexicalParagraphs data={relatedCasesDescription} />
+            ) : undefined
+          }
+          buttonLabel={relatedCasesButtonLabel}
+          buttonUrl={relatedCasesButtonUrl}
+        />
+      )}
 
       <hr className="divider-solid" />
 

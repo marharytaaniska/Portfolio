@@ -22,6 +22,13 @@ export const TestimonialsGlobal: GlobalConfig = {
       localized: true,
     },
     {
+      name: 'read_more_label',
+      type: 'text',
+      label: 'Кнопка «Читать полностью»',
+      defaultValue: 'Читать полностью',
+      localized: true,
+    },
+    {
       name: 'section_content',
       type: 'richText',
       label: 'Контент секции',

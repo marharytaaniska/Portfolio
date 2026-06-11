@@ -35,7 +35,7 @@ export async function BackgroundSection({ background }: BackgroundSectionProps) 
         {background.section_description && (
           <div
             style={{
-              maxWidth: 670,
+              maxWidth: 660,
               font: '400 18px/26px var(--font-body)',
               color: 'var(--ink-600)',
             }}

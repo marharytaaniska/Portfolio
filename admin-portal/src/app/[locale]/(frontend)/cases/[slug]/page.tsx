@@ -79,10 +79,35 @@ export default async function CasePage({ params: paramsPromise }: Args) {
     date: cdp?.label_date ?? undefined,
     back: cdp?.back_label ?? undefined,
   }
+  const relatedCasesTitle: string = cdp?.related_cases_title ?? 'Related Cases'
+  const relatedCasesDescription = cdp?.related_cases_description ?? null
+  const relatedCasesButtonLabel: string | undefined = cdp?.related_cases_button_label ?? undefined
+  const relatedCasesButtonUrl: string | undefined = cdp?.related_cases_button_url ?? undefined
+  const relatedCases = ((caseDoc as any).related_cases ?? []).filter(
+    (c: unknown): c is NonNullable<typeof c> => typeof c === 'object' && c !== null,
+  )
+
+  const ca = caseAccessGlobal as any
+  const caseAccessLabels = {
+    modalTitle: ca?.modal_title ?? undefined,
+    passwordPlaceholder: ca?.password_placeholder ?? undefined,
+    continueButtonLabel: ca?.continue_button_label ?? undefined,
+    invalidPasswordError: ca?.invalid_password_error ?? undefined,
+  }
 
   return (
     <CasePageShell navData={navData}>
-      <CaseDetailContent caseDoc={caseDoc} contacts={contacts as Contact} labels={caseLabels} />
+      <CaseDetailContent
+        caseDoc={caseDoc}
+        contacts={contacts as Contact}
+        labels={caseLabels}
+        relatedCases={relatedCases}
+        relatedCasesTitle={relatedCasesTitle}
+        relatedCasesDescription={relatedCasesDescription}
+        relatedCasesButtonLabel={relatedCasesButtonLabel}
+        relatedCasesButtonUrl={relatedCasesButtonUrl}
+        caseAccessLabels={caseAccessLabels}
+      />
     </CasePageShell>
   )
 }

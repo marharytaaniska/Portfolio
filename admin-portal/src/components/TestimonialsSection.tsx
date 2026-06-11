@@ -65,7 +65,7 @@ export function TestimonialsSection({ testimonials, section }: TestimonialsSecti
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
               <path
-                d="M12.5 4 6.5 10l6 6"
+                d="M15.6569 9.9994H4.34315M9.29289 5.04965L4.34315 9.9994L9.29289 14.9491"
                 stroke="currentColor"
                 strokeWidth="1.5"
                 strokeLinecap="round"
@@ -82,7 +82,7 @@ export function TestimonialsSection({ testimonials, section }: TestimonialsSecti
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
               <path
-                d="m7.5 4 6 6-6 6"
+                d="M4.3431 9.9994H15.6569M10.7071 5.04965L15.6569 9.9994L10.7071 14.9491"
                 stroke="currentColor"
                 strokeWidth="1.5"
                 strokeLinecap="round"
@@ -101,7 +101,7 @@ export function TestimonialsSection({ testimonials, section }: TestimonialsSecti
           {pages.map((page, p) => (
             <div key={p} className="reviews-page">
               {page.map((r, i) => (
-                <ReviewCard key={i} {...r} onReadMore={setOpenReview} />
+                <ReviewCard key={i} {...r} readMoreLabel={(section as any).read_more_label} onReadMore={setOpenReview} />
               ))}
             </div>
           ))}

@@ -2,8 +2,6 @@ import React from 'react'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { Button } from '@/components/Button'
-import './globals.css'
-import './portfolio.css'
 
 export const dynamic = 'force-dynamic'
 

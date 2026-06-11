@@ -43,7 +43,7 @@ export async function ExperienceSection({ section, experiences }: ExperienceSect
         {section.section_description && (
           <div
             style={{
-              maxWidth: 670,
+              maxWidth: 800,
               font: `400 ${bodyFontSize}/${bodyLineHeight} var(--font-body)`,
               color: bodyColor,
             }}
@@ -152,23 +152,25 @@ export async function ExperienceSection({ section, experiences }: ExperienceSect
                           marginTop: 8,
                         }}
                       >
-                        {exp.links.map((link, li) => (
-                          <a
-                            key={li}
-                            href={link.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-link"
-                            style={
-                              {
-                                font: `400 ${bodyFontSize}/${bodyLineHeight} var(--font-body)`,
-                                '--link-color': linkColor,
-                              } as CSSProperties
-                            }
-                          >
-                            {link.label}
-                          </a>
-                        ))}
+                        {exp.links.map((link, li) => {
+                          const isAnchor = link.url.startsWith('#') || link.url.startsWith('/#')
+                          return (
+                            <a
+                              key={li}
+                              href={link.url}
+                              {...(!isAnchor && { target: '_blank', rel: 'noopener noreferrer' })}
+                              className="inline-link"
+                              style={
+                                {
+                                  font: `400 ${bodyFontSize}/${bodyLineHeight} var(--font-body)`,
+                                  '--link-color': linkColor,
+                                } as CSSProperties
+                              }
+                            >
+                              {link.label}
+                            </a>
+                          )
+                        })}
                       </div>
                     )}
                   </div>

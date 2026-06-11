@@ -161,6 +161,17 @@ main { margin-left: var(--rail-w); padding-top: var(--header-h); }
 .side-rail-item.is-active             { color: var(--ink-900); }
 .side-rail-item:not(.is-active):hover { color: var(--ink-900); }
 
+/* ── 404 ─────────────────────────────────────────────────── */
+.not-found-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 0 var(--page-px);
+  margin-left: 0;
+  padding-top: 0;
+}
+
 /* ── Hero ────────────────────────────────────────────────── */
 .hero { display: flex; flex-direction: column; gap: 32px; align-items: center; text-align: center; }
 .hero h1    { max-width: 1200px; white-space: pre-line; }
@@ -234,7 +245,7 @@ main { margin-left: var(--rail-w); padding-top: var(--header-h); }
   align-self: flex-start;
   cursor: pointer;
   font: 400 18px/26px var(--font-body);
-  color: var(--ink-900);
+  color: #4F5C65;
   text-decoration: underline;
   text-underline-offset: 2px;
   text-decoration-thickness: 1px;
@@ -243,6 +254,7 @@ main { margin-left: var(--rail-w); padding-top: var(--header-h); }
 .review-readmore:hover { color: var(--accent); }
 
 /* ── Review modal ────────────────────────────────────────── */
+/* Desktop: × inside panel top-right. Mobile: circular FAB below panel. */
 .review-modal {
   position: fixed;
   inset: 0;
@@ -257,13 +269,20 @@ main { margin-left: var(--rail-w); padding-top: var(--header-h); }
   background: rgba(13, 30, 44, 0.45);
   animation: review-fade .15s ease both;
 }
+.review-modal-inner {
+  position: relative;
+  z-index: 1;
+  width: min(800px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
 .review-modal-panel {
   position: relative;
-  width: min(640px, 100%);
-  max-height: calc(100vh - 48px);
-  overflow-y: auto;
+  width: 100%;
+  max-height: min(800px, calc(100vh - 48px));
+  overflow: hidden;
   background: var(--white);
-  padding: 48px;
   display: flex;
   flex-direction: column;
   animation: review-rise .15s ease both;
@@ -271,7 +290,8 @@ main { margin-left: var(--rail-w); padding-top: var(--header-h); }
 .review-modal-close {
   all: unset;
   position: absolute;
-  top: 24px; right: 24px;
+  top: 16px; right: 16px;
+  z-index: 2;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -279,12 +299,28 @@ main { margin-left: var(--rail-w); padding-top: var(--header-h); }
   color: var(--ink-400);
   transition: color .15s ease;
 }
+.review-modal-close svg { display: block; }
 .review-modal-close:hover { color: var(--ink-900); }
-.review-modal-quote  { margin: 0 0 48px; font: 400 18px/26px var(--font-body); color: var(--ink-800); text-wrap: pretty; }
+.review-modal-close-fab { display: none; }
+.review-modal-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 32px 48px 24px 32px;
+}
+.review-modal-quote   { margin: 0; font: 400 18px/28px var(--font-body); color: var(--ink-600); text-wrap: pretty; }
 .review-modal-quote p { margin: 0; }
 .review-modal-quote p + p { margin-top: 16px; }
-.review-modal-author { display: flex; flex-direction: column; gap: 0; }
-.review-modal-author h3   { margin: 0 0 12px; font: 400 24px/28px var(--font-display); color: var(--ink-900); }
+.review-modal-quote strong,
+.review-modal-quote b { font-weight: 500; font-family: var(--font-body); color: #0D1E2C; }
+.review-modal-author {
+  flex-shrink: 0;
+  padding: 24px 32px 32px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+.review-modal-author h3   { margin: 0 0 8px; font: 400 24px/28px var(--font-display); color: var(--ink-900); }
 .review-modal-author span { font: 400 16px/24px var(--font-body); color: var(--ink-400); }
 @keyframes review-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes review-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
@@ -476,13 +512,10 @@ button.exp-expand-btn:hover { color: var(--accent); }
 .menu-items  { display: flex; flex-direction: column; gap: 20px; }
 .menu-item {
   display: inline-flex; align-items: center; gap: 8px;
-  text-decoration: none; color: var(--ink-300);
+  text-decoration: none; color: #0D1E2C;
   font: 500 20px/28px var(--font-body);
   cursor: pointer;
-  transition: color .15s ease;
 }
-.menu-item.is-active             { color: var(--ink-900); }
-.menu-item:not(.is-active):hover { color: var(--ink-900); }
 .menu-divider   { height: 1px; background: var(--border); border: none; margin: 0; }
 .menu-cta-block { display: none; flex-direction: column; gap: 20px; }
 .menu-cta-row   { display: flex; gap: 16px; }
@@ -606,7 +639,39 @@ button.exp-expand-btn:hover { color: var(--accent); }
 .case-card:hover .case-card-image video,
 .case-card:hover .case-card-placeholder { transform: scale(1.06); }
 
+.case-card-password-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(13, 30, 44, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+.case-card-password-badge svg { width: 24px; height: 24px; display: block; }
+@media (max-width: 727px) {
+  .case-card-password-badge { width: 32px; height: 32px; top: 12px; right: 12px; }
+  .case-card-password-badge svg { width: 16px; height: 16px; }
+}
+
 /* ── Case detail ─────────────────────────────────────────── */
+
+/* Related cases section on case detail page */
+.related-cases { display: flex; flex-direction: column; gap: 48px; }
+.related-cases-header { display: flex; flex-direction: column; gap: 32px; }
+.related-cases-title-row { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.related-cases-title-row .btn { font: 500 20px/28px var(--font-body); }
+@media (max-width: 727px) {
+  .related-cases-header { gap: 24px; }
+  .related-cases-title-row { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .related-cases-title-row .btn { height: 48px !important; padding: 10px 24px !important; font: 500 14px/22px var(--font-body) !important; width: 100%; }
+}
+@media (max-width: 727px) { .related-cases { gap: 32px; } }
 
 /* Outer wrapper: case content + solid divider + contacts */
 .case-page {
@@ -861,6 +926,7 @@ ol.case-text       { list-style-type: decimal !important; }
 
   /* Hero scales down */
   .hero { gap: 24px; }
+  .not-found-page .hero { width: 100%; }
   .hero h1    { font-size: 28px; line-height: 36px; letter-spacing: -0.01em; }
   .hero p.sub { font: 400 14px/22px var(--font-body) !important; }
   .hero .ctas {
@@ -929,12 +995,30 @@ ol.case-text       { list-style-type: decimal !important; }
   .reviews-viewport { order: 2; }
   .reviews-arrows { order: 3; display: flex; justify-content: flex-start; gap: 12px; }
 
-  /* Review modal mobile padding */
-  .review-modal       { padding: 16px; }
-  .review-modal-panel { padding: 32px 24px; }
-  .review-modal-close { top: 16px; right: 16px; }
-  .review-modal-quote { font: 400 14px/22px var(--font-body); margin: 0 0 32px; }
-  .review-modal-author h3   { font: 400 16px/24px var(--font-display); margin: 0 0 8px; }
+  /* Review modal — mobile: FAB outside panel, tighter padding */
+  .review-modal         { padding: 16px; }
+  .review-modal-inner   { width: 100%; gap: 12px; }
+  .review-modal-panel   { max-height: min(500px, calc(100vh - 100px)); }
+  .review-modal-close   { display: none; }
+  .review-modal-close-fab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--ink-900);
+    transition: background .15s ease;
+  }
+  .review-modal-body    { padding: 24px 24px 16px; }
+  .review-modal-quote   { font: 400 16px/24px var(--font-body); }
+  .review-modal-author  { padding: 16px 24px 24px; }
+  .review-modal-author h3   { font: 400 20px/24px var(--font-display); margin: 0 0 4px; }
   .review-modal-author span { font: 400 13px/20px var(--font-body); }
   .review-readmore    { font: 400 14px/22px var(--font-body); }
   .reviews-footer     { font: 400 14px/22px var(--font-body) !important; justify-content: flex-start; }

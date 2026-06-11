@@ -70,6 +70,19 @@ export const Experience: CollectionConfig = {
           type: 'text',
           label: 'URL',
           required: true,
+          admin: {
+            description: 'External URL (https://…) or anchor link (#section, /#section)',
+          },
+          validate: (val: string | null | undefined) => {
+            if (!val) return true
+            if (val.startsWith('#') || val.startsWith('/')) return true
+            try {
+              new URL(val)
+              return true
+            } catch {
+              return 'Enter a valid URL (e.g. https://example.com) or an anchor link (e.g. #cases, /#cases)'
+            }
+          },
         },
       ],
     },
