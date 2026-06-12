@@ -31,8 +31,8 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
     ? 'Маргарита Анисько — Продуктовый и UX/UI дизайнер'
     : 'Marharyta Anisko — Product & UX/UI Designer'
   const description = isRu
-    ? '5 лет в дизайне сложных продуктов. Структурирую хаос, проектирую масштабируемые дизайн-системы, работаю на результат и метрики.'
-    : '5 years designing complex products. I structure chaos, build scalable design systems, and focus on results and metrics.'
+    ? '5 лет в дизайне сложных продуктов. Структурирую хаос, создаю дизайн-системы, работаю на результат.'
+    : '5 years designing complex products. Structuring chaos, building design systems, focusing on results.'
 
   return {
     title,
