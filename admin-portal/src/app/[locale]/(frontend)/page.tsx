@@ -5,6 +5,7 @@ import React from 'react'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import type { Locale } from '@/i18n/routing'
+import type { Media } from '@/payload-types'
 
 import { PageShell } from './page.client'
 import type { NavData } from './page.client'
@@ -15,27 +16,34 @@ import { BackgroundSection } from '@/components/BackgroundSection'
 import { ExperienceSection } from '@/components/ExperienceSection'
 import { ContactsSection } from '@/components/ContactsSection'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { getSiteSettings } from '@/utilities/getSiteSettings'
 
 type Args = { params: Promise<{ locale: Locale }> }
 
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { locale } = await params
   const isRu = locale === 'ru'
+
+  const siteSettings = await getSiteSettings()
+  const ogImage = typeof siteSettings.og_image === 'object' ? (siteSettings.og_image as Media) : null
+
+  const title = isRu
+    ? 'Маргарита Анисько — Продуктовый и UX/UI дизайнер'
+    : 'Marharyta Anisko — Product & UX/UI Designer'
+  const description = isRu
+    ? '5 лет в дизайне сложных продуктов. Структурирую хаос, проектирую масштабируемые дизайн-системы, работаю на результат и метрики.'
+    : '5 years designing complex products. I structure chaos, build scalable design systems, and focus on results and metrics.'
+
   return {
-    title: isRu
-      ? 'Маргарита Анисько — Продуктовый и UX/UI дизайнер'
-      : 'Marharyta Anisko — Product & UX/UI Designer',
-    description: isRu
-      ? '5 лет в дизайне сложных продуктов. Структурирую хаос, проектирую масштабируемые дизайн-системы, работаю на результат и метрики.'
-      : '5 years designing complex products. I structure chaos, build scalable design systems, and focus on results and metrics.',
+    title,
+    description,
     openGraph: mergeOpenGraph({
-      title: isRu
-        ? 'Маргарита Анисько — Продуктовый и UX/UI дизайнер'
-        : 'Marharyta Anisko — Product & UX/UI Designer',
-      description: isRu
-        ? '5 лет в дизайне сложных продуктов. Структурирую хаос, проектирую масштабируемые дизайн-системы, работаю на результат и метрики.'
-        : '5 years designing complex products. I structure chaos, build scalable design systems, and focus on results and metrics.',
+      title,
+      description,
       url: `https://www.marharytaanisko.xyz/${locale}`,
+      ...(ogImage?.url
+        ? { images: [{ url: ogImage.url, width: 1200, height: 630, alt: ogImage.alt ?? title }] }
+        : {}),
     }),
   }
 }

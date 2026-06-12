@@ -12,6 +12,8 @@ import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { getServerSideURL } from '@/utilities/getURL'
+import { getSiteSettings } from '@/utilities/getSiteSettings'
+import type { Media } from '@/payload-types'
 
 import '../../(frontend)/globals.css'
 import '../../(frontend)/portfolio.css'
@@ -37,8 +39,6 @@ export default async function LocaleLayout({ children, params }: Props) {
       suppressHydrationWarning
     >
       <head>
-        <link href="/favicon.ico" rel="icon" sizes="32x32" />
-        <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
         {routing.locales.map((l) => (
           <link
             key={l}
@@ -62,11 +62,18 @@ export default async function LocaleLayout({ children, params }: Props) {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale } = await params
+  const siteSettings = await getSiteSettings()
+  const favicon = typeof siteSettings.favicon === 'object' ? (siteSettings.favicon as Media) : null
+
   return {
     metadataBase: new URL(getServerSideURL()),
     openGraph: mergeOpenGraph(),
     twitter: { card: 'summary_large_image' },
+    icons: {
+      icon: favicon?.url
+        ? [{ url: favicon.url }]
+        : [{ url: '/favicon.ico', sizes: '32x32' }, { url: '/favicon.svg', type: 'image/svg+xml' }],
+    },
     alternates: {
       languages: Object.fromEntries(
         routing.locales.map((l) => [l, `${getServerSideURL()}/${l}`]),

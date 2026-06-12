@@ -27,6 +27,7 @@ import { ExperienceGlobal } from './collections/ExperienceGlobal'
 import { CaseDetailPageGlobal } from './collections/CaseDetailPageGlobal'
 import { CaseAccessGlobal } from './collections/CaseAccessGlobal'
 import { NotFoundPageGlobal } from './collections/NotFoundPageGlobal'
+import { SiteSettingsGlobal } from './collections/SiteSettingsGlobal'
 
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
@@ -105,6 +106,7 @@ export default buildConfig({
     CaseDetailPageGlobal,
     CaseAccessGlobal,
     NotFoundPageGlobal,
+    SiteSettingsGlobal,
   ],
   cors: [getServerSideURL()].filter(Boolean),
   plugins,
