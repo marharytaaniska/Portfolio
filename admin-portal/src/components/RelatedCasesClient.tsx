@@ -1,7 +1,6 @@
 'use client'
 
 import React from 'react'
-import type { CSSProperties } from 'react'
 import type { Case } from '@/payload-types'
 import { Link } from '@/i18n/navigation'
 import { PasswordModal } from './PasswordModal'
@@ -10,15 +9,18 @@ import type { CaseAccessLabels } from './PasswordModal'
 interface RelatedCasesClientProps {
   cases: Pick<Case, 'id' | 'slug' | 'title'>[]
   caseAccessLabels?: CaseAccessLabels
-  style?: CSSProperties
+  font: string
+  linkColor: string
 }
 
-export function RelatedCasesClient({ cases, caseAccessLabels = {}, style }: RelatedCasesClientProps) {
+export function RelatedCasesClient({ cases, caseAccessLabels = {}, font, linkColor }: RelatedCasesClientProps) {
   const [modalSlug, setModalSlug] = React.useState<string | null>(null)
+
+  const linkStyle = { font, '--link-color': linkColor } as React.CSSProperties
 
   return (
     <>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'flex-start' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0 24px', marginTop: 8 }}>
         {cases.map((c) => {
           const isProtected = Boolean((c as any).password_required)
           if (isProtected) {
@@ -28,7 +30,7 @@ export function RelatedCasesClient({ cases, caseAccessLabels = {}, style }: Rela
                 href="#"
                 onClick={(e) => { e.preventDefault(); setModalSlug(c.slug) }}
                 className="inline-link"
-                style={style}
+                style={linkStyle}
               >
                 {c.title}
               </a>
@@ -39,7 +41,7 @@ export function RelatedCasesClient({ cases, caseAccessLabels = {}, style }: Rela
               key={c.id}
               href={`/cases/${c.slug}`}
               className="inline-link"
-              style={style}
+              style={linkStyle}
             >
               {c.title}
             </Link>

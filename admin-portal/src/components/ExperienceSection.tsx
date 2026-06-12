@@ -183,12 +183,8 @@ export async function ExperienceSection({ section, experiences, caseAccessLabels
                       <RelatedCasesClient
                         cases={relatedCases}
                         caseAccessLabels={caseAccessLabels}
-                        style={
-                          {
-                            font: `400 ${bodyFontSize}/${bodyLineHeight} var(--font-body)`,
-                            '--link-color': linkColor,
-                          } as CSSProperties
-                        }
+                        font={`400 ${bodyFontSize}/${bodyLineHeight} var(--font-body)`}
+                        linkColor={linkColor}
                       />
                     </div>
                   )}
