@@ -1,21 +1,26 @@
 import React from 'react'
+import { headers } from 'next/headers'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { Button } from '@/components/Button'
+import type { Locale } from '@/i18n/routing'
 import './globals.css'
 import './portfolio.css'
 
 export const dynamic = 'force-dynamic'
 
 export default async function NotFound() {
+  const headersList = await headers()
+  const locale = (headersList.get('x-locale') ?? 'ru') as Locale
+
   let title = '404'
-  let description = 'Страница не найдена.'
-  let buttonLabel = 'На главную'
-  let buttonUrl = '/ru'
+  let description = locale === 'ru' ? 'Страница не найдена.' : 'Page not found.'
+  let buttonLabel = locale === 'ru' ? 'На главную' : 'Go home'
+  let buttonUrl = `/${locale}`
 
   try {
     const payload = await getPayload({ config: configPromise })
-    const data = await payload.findGlobal({ slug: 'not-found-page', locale: 'ru' }) as {
+    const data = await payload.findGlobal({ slug: 'not-found-page', locale }) as {
       title?: string | null
       description?: string | null
       button_label?: string | null
