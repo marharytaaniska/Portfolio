@@ -1,4 +1,5 @@
 import type { Case, Media, Tag } from '@/payload-types'
+import Image from 'next/image'
 import Link from 'next/link'
 import { MetaDot } from './LiveDot'
 
@@ -24,8 +25,13 @@ export function CaseCard({ caseItem, size = 'small', onPasswordClick }: CaseCard
         style={{ aspectRatio: size === 'big' ? '1360 / 750' : '648 / 420' }}
       >
         {cover?.url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={cover.url} alt={cover.alt ?? caseItem.title} />
+          <Image
+            src={cover.url}
+            alt={cover.alt ?? caseItem.title}
+            fill
+            sizes={size === 'big' ? '(max-width: 768px) 100vw, 1360px' : '(max-width: 768px) 100vw, 660px'}
+            style={{ objectFit: 'cover' }}
+          />
         ) : (
           <>
             <div
