@@ -24,15 +24,18 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { locale } = await params
   const isRu = locale === 'ru'
 
-  const siteSettings = await getSiteSettings()
+  const siteSettings = await getSiteSettings(locale)
   const ogImage = typeof siteSettings.og_image === 'object' ? (siteSettings.og_image as Media) : null
 
-  const title = isRu
+  const fallbackTitle = isRu
     ? 'Маргарита Анисько — Продуктовый и UX/UI дизайнер'
     : 'Marharyta Anisko — Product & UX/UI Designer'
-  const description = isRu
+  const fallbackDescription = isRu
     ? '5 лет в дизайне сложных продуктов. Структурирую хаос, создаю дизайн-системы, работаю на результат.'
     : '5 years designing complex products. Structuring chaos, building design systems, focusing on results.'
+
+  const title = (siteSettings.og_title as string | null) || fallbackTitle
+  const description = (siteSettings.og_description as string | null) || fallbackDescription
 
   return {
     title,

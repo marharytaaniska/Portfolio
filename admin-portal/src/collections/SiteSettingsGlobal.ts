@@ -25,5 +25,25 @@ export const SiteSettingsGlobal: GlobalConfig = {
         description: 'Иконка во вкладке браузера. Загрузи .ico, .svg или .png файл.',
       },
     },
+    {
+      name: 'og_title',
+      type: 'text',
+      label: 'OG Title',
+      localized: true,
+      maxLength: 60,
+      admin: {
+        description: 'Заголовок при шаринге. Максимум 60 символов.',
+      },
+    },
+    {
+      name: 'og_description',
+      type: 'textarea',
+      label: 'OG Description',
+      localized: true,
+      maxLength: 125,
+      admin: {
+        description: 'Описание при шаринге. Максимум 125 символов.',
+      },
+    },
   ],
 }

@@ -62,7 +62,8 @@ export default async function LocaleLayout({ children, params }: Props) {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const siteSettings = await getSiteSettings()
+  const { locale } = await params
+  const siteSettings = await getSiteSettings(locale as any)
   const favicon = typeof siteSettings.favicon === 'object' ? (siteSettings.favicon as Media) : null
 
   return {
