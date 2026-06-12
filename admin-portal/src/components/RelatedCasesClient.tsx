@@ -20,7 +20,7 @@ export function RelatedCasesClient({ cases, caseAccessLabels = {}, font, linkCol
 
   return (
     <>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0 24px', marginTop: 8 }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0 16px', marginTop: 8 }}>
         {cases.map((c) => {
           const isProtected = Boolean((c as any).password_required)
           if (isProtected) {
