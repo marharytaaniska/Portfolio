@@ -108,6 +108,7 @@ export default async function HomePage({ params: paramsPromise }: Args) {
     })),
   }
 
+  const ca = caseAccess as any
   const sections: React.ReactNode[] = []
 
   if ((hero as any).enabled !== false) {
@@ -115,7 +116,6 @@ export default async function HomePage({ params: paramsPromise }: Args) {
   }
 
   if ((relevantCasesSection as any).enabled !== false) {
-    const ca = caseAccess as any
     sections.push(
       <CasesSection
         key="cases"
