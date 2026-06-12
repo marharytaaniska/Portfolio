@@ -150,7 +150,17 @@ export default async function HomePage({ params: paramsPromise }: Args) {
 
   if ((experienceSection as any).enabled !== false) {
     sections.push(
-      <ExperienceSection key="experience" section={experienceSection} experiences={experiences} />,
+      <ExperienceSection
+            key="experience"
+            section={experienceSection}
+            experiences={experiences}
+            caseAccessLabels={{
+              modalTitle: ca?.modal_title ?? undefined,
+              passwordPlaceholder: ca?.password_placeholder ?? undefined,
+              continueButtonLabel: ca?.continue_button_label ?? undefined,
+              invalidPasswordError: ca?.invalid_password_error ?? undefined,
+            }}
+          />,
     )
   }
 

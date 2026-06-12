@@ -3,17 +3,19 @@ import type { ExperienceSection as ExperienceSectionData, Experience, Media, Cas
 import { getTranslations } from 'next-intl/server'
 import RichText from '@/components/RichText'
 import { MetaDot } from './LiveDot'
-import { Link } from '@/i18n/navigation'
 import type { Locale } from '@/i18n/routing'
 import { ExperienceListClient } from './ExperienceListClient'
+import { RelatedCasesClient } from './RelatedCasesClient'
+import type { CaseAccessLabels } from './PasswordModal'
 
 interface ExperienceSectionProps {
   section: ExperienceSectionData
   experiences: Experience[]
   locale?: Locale
+  caseAccessLabels?: CaseAccessLabels
 }
 
-export async function ExperienceSection({ section, experiences }: ExperienceSectionProps) {
+export async function ExperienceSection({ section, experiences, caseAccessLabels }: ExperienceSectionProps) {
   const t = await getTranslations('experience')
   const s = section.style ?? {}
 
@@ -178,30 +180,16 @@ export async function ExperienceSection({ section, experiences }: ExperienceSect
                   {relatedCases.length > 0 && (
                     <div className="exp-col">
                       <h3 style={{ color: headingColor }}>{t('relatedCases')}:</h3>
-                      <div
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: 16,
-                          alignItems: 'flex-start',
-                        }}
-                      >
-                        {relatedCases.map((c) => (
-                          <Link
-                            key={c.id}
-                            href={`/cases/${c.slug}`}
-                            className="inline-link"
-                            style={
-                              {
-                                font: `400 ${bodyFontSize}/${bodyLineHeight} var(--font-body)`,
-                                '--link-color': linkColor,
-                              } as CSSProperties
-                            }
-                          >
-                            {c.title}
-                          </Link>
-                        ))}
-                      </div>
+                      <RelatedCasesClient
+                        cases={relatedCases}
+                        caseAccessLabels={caseAccessLabels}
+                        style={
+                          {
+                            font: `400 ${bodyFontSize}/${bodyLineHeight} var(--font-body)`,
+                            '--link-color': linkColor,
+                          } as CSSProperties
+                        }
+                      />
                     </div>
                   )}
                 </div>
