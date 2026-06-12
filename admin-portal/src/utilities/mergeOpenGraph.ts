@@ -7,6 +7,9 @@ const defaultOpenGraph: Metadata['openGraph'] = {
   images: [
     {
       url: `${getServerSideURL()}/og-image.jpg`,
+      width: 1200,
+      height: 630,
+      alt: 'Marharyta Anisko — Product & UX/UI Designer',
     },
   ],
   siteName: 'Marharyta Anisko',

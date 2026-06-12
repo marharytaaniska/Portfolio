@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic'
 
+import type { Metadata } from 'next'
 import React from 'react'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
@@ -13,8 +14,31 @@ import { TestimonialsSection } from '@/components/TestimonialsSection'
 import { BackgroundSection } from '@/components/BackgroundSection'
 import { ExperienceSection } from '@/components/ExperienceSection'
 import { ContactsSection } from '@/components/ContactsSection'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 
 type Args = { params: Promise<{ locale: Locale }> }
+
+export async function generateMetadata({ params }: Args): Promise<Metadata> {
+  const { locale } = await params
+  const isRu = locale === 'ru'
+  return {
+    title: isRu
+      ? 'Маргарита Анисько — Продуктовый и UX/UI дизайнер'
+      : 'Marharyta Anisko — Product & UX/UI Designer',
+    description: isRu
+      ? '5 лет в дизайне сложных продуктов. Структурирую хаос, проектирую масштабируемые дизайн-системы, работаю на результат и метрики.'
+      : '5 years designing complex products. I structure chaos, build scalable design systems, and focus on results and metrics.',
+    openGraph: mergeOpenGraph({
+      title: isRu
+        ? 'Маргарита Анисько — Продуктовый и UX/UI дизайнер'
+        : 'Marharyta Anisko — Product & UX/UI Designer',
+      description: isRu
+        ? '5 лет в дизайне сложных продуктов. Структурирую хаос, проектирую масштабируемые дизайн-системы, работаю на результат и метрики.'
+        : '5 years designing complex products. I structure chaos, build scalable design systems, and focus on results and metrics.',
+      url: `https://www.marharytaanisko.xyz/${locale}`,
+    }),
+  }
+}
 
 export default async function HomePage({ params: paramsPromise }: Args) {
   const { locale } = await paramsPromise
