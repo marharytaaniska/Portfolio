@@ -23,14 +23,15 @@ export function RelatedCasesClient({ cases, caseAccessLabels = {}, style }: Rela
           const isProtected = Boolean((c as any).password_required)
           if (isProtected) {
             return (
-              <button
+              <a
                 key={c.id}
-                onClick={() => setModalSlug(c.slug)}
+                href="#"
+                onClick={(e) => { e.preventDefault(); setModalSlug(c.slug) }}
                 className="inline-link"
-                style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left', ...style }}
+                style={style}
               >
                 {c.title}
-              </button>
+              </a>
             )
           }
           return (
