@@ -143,13 +143,24 @@ function CaseSummary({ items }: { items: SummaryItem[] }) {
   )
 }
 
+const VIDEO_EXTENSIONS = ['.mp4', '.webm', '.ogg', '.mov']
+
+function isVideo(src: string): boolean {
+  const path = src.split('?')[0].toLowerCase()
+  return VIDEO_EXTENSIONS.some((ext) => path.endsWith(ext))
+}
+
 function CaseSingleImage({ src, alt }: { src?: string | null; alt?: string }) {
   return (
     <figure className="case-img-single">
       <div className="case-img-frame" role="img" aria-label={alt ?? 'image'}>
         {src ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={src} alt={alt ?? ''} />
+          isVideo(src) ? (
+            <video src={src} autoPlay loop muted playsInline />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={src} alt={alt ?? ''} />
+          )
         ) : (
           <span className="case-img-placeholder">{alt ?? 'image'}</span>
         )}
