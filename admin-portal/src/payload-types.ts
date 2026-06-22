@@ -112,6 +112,7 @@ export interface Config {
     'case-detail-page': CaseDetailPage;
     'case-access': CaseAccess;
     'not-found-page': NotFoundPage;
+    'site-settings': SiteSetting;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
@@ -124,6 +125,7 @@ export interface Config {
     'case-detail-page': CaseDetailPageSelect<false> | CaseDetailPageSelect<true>;
     'case-access': CaseAccessSelect<false> | CaseAccessSelect<true>;
     'not-found-page': NotFoundPageSelect<false> | NotFoundPageSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
   };
   locale: 'ru' | 'en';
   widgets: {
@@ -1196,6 +1198,23 @@ export interface NotFoundPage {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  /**
+   * Изображение при шаринге сайта в соцсетях и мессенджерах. Рекомендуемый размер: 1200×630px.
+   */
+  og_image?: (number | null) | Media;
+  /**
+   * Иконка во вкладке браузера. Загрузи .ico, .svg или .png файл.
+   */
+  favicon?: (number | null) | Media;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -1376,6 +1395,17 @@ export interface NotFoundPageSelect<T extends boolean = true> {
   description?: T;
   button_label?: T;
   button_url?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  og_image?: T;
+  favicon?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
