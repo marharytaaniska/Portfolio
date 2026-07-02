@@ -175,11 +175,15 @@ function CaseDoubleImage({ images }: { images: Array<{ src?: string | null; alt?
       {images.slice(0, 2).map((it, i) => (
         <div key={i} className="case-img-frame" role="img" aria-label={it.alt ?? 'image'}>
           {it.src ? (
+          isVideo(it.src) ? (
+            <video src={it.src} autoPlay loop muted playsInline />
+          ) : (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={it.src} alt={it.alt ?? ''} />
-          ) : (
-            <span className="case-img-placeholder">{it.alt ?? 'image'}</span>
-          )}
+          )
+        ) : (
+          <span className="case-img-placeholder">{it.alt ?? 'image'}</span>
+        )}
         </div>
       ))}
     </figure>
