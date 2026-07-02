@@ -1210,6 +1210,14 @@ export interface SiteSetting {
    * Иконка во вкладке браузера. Загрузи .ico, .svg или .png файл.
    */
   favicon?: (number | null) | Media;
+  /**
+   * Заголовок при шаринге. Максимум 60 символов.
+   */
+  og_title?: string | null;
+  /**
+   * Описание при шаринге. Максимум 125 символов.
+   */
+  og_description?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1406,6 +1414,8 @@ export interface NotFoundPageSelect<T extends boolean = true> {
 export interface SiteSettingsSelect<T extends boolean = true> {
   og_image?: T;
   favicon?: T;
+  og_title?: T;
+  og_description?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

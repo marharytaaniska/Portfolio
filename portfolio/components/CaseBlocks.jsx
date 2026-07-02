@@ -62,7 +62,7 @@ function CaseSingleImage({ src, alt = "", aspect = "1360 / 765", placeholder = "
   return (
     <figure className="case-img-single">
       <div
-        className="case-img-frame"
+       className="case-img-frame"
         style={{
           aspectRatio: aspect,
           background: src
@@ -71,8 +71,17 @@ function CaseSingleImage({ src, alt = "", aspect = "1360 / 765", placeholder = "
         }}
         role="img"
         aria-label={alt || placeholder}
-      >
-        {!src ? <span className="case-img-placeholder">{placeholder}</span> : null}
+        >
+        {src ? (
+          isVideo(src) ? (
+            <video src={src} autoPlay loop muted playsInline />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={src} alt={alt ?? ''} />
+          )
+        ) : (
+          <span className="case-img-placeholder">{alt ?? 'image'}</span>
+        )}
       </div>
     </figure>
   );
