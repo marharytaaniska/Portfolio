@@ -54,6 +54,13 @@ function CaseSummary({ items = [] }) {
   );
 }
 
+const VIDEO_EXTENSIONS = ['.mp4', '.webm', '.ogg', '.mov']
+
+function isVideo(src = "") {
+  const path = src.split('?')[0].toLowerCase()
+  return VIDEO_EXTENSIONS.some((ext) => path.endsWith(ext))
+}
+
 // ──────────────────────────────────────────────────────────────────
 // SingleImage — full-width 16:9 swatch. Accepts `src` (URL) or falls back
 // to gray placeholder. `caption` is rendered below if provided.
@@ -73,7 +80,7 @@ function CaseSingleImage({ src, alt = "", aspect = "1360 / 765", placeholder = "
         aria-label={alt || placeholder}
         >
         {src ? (
-          isVideo(src) ? (
+          isVideo(src) ? (+
             <video src={src} autoPlay loop muted playsInline />
           ) : (
             // eslint-disable-next-line @next/next/no-img-element
@@ -87,12 +94,6 @@ function CaseSingleImage({ src, alt = "", aspect = "1360 / 765", placeholder = "
   );
 }
 
-const VIDEO_EXTENSIONS = ['.mp4', '.webm', '.ogg', '.mov']
-
-function isVideo(src = "") {
-  const path = src.split('?')[0].toLowerCase()
-  return VIDEO_EXTENSIONS.some((ext) => path.endsWith(ext))
-}
 
 // ──────────────────────────────────────────────────────────────────
 // DoubleImage — two images side-by-side on desktop (648 × 365 each, gap 64);
@@ -115,7 +116,16 @@ function CaseDoubleImage({ left, right, items, aspect = "648 / 365", placeholder
           role="img"
           aria-label={it.alt || placeholder}
         >
-          {!it.src ? <span className="case-img-placeholder">{placeholder}</span> : null}
+        {it.src  ? (
+          isVideo(it.src ) ? (+
+            <video src={it.src } autoPlay loop muted playsInline />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={it.src } alt={alt ?? ''} />
+          )
+        ) : (
+          !it.src ? <span className="case-img-placeholder">{placeholder}</span> : null
+        )}
         </div>
       ))}
     </figure>
