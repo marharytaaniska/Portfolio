@@ -87,6 +87,13 @@ function CaseSingleImage({ src, alt = "", aspect = "1360 / 765", placeholder = "
   );
 }
 
+const VIDEO_EXTENSIONS = ['.mp4', '.webm', '.ogg', '.mov']
+
+function isVideo(src = "") {
+  const path = src.split('?')[0].toLowerCase()
+  return VIDEO_EXTENSIONS.some((ext) => path.endsWith(ext))
+}
+
 // ──────────────────────────────────────────────────────────────────
 // DoubleImage — two images side-by-side on desktop (648 × 365 each, gap 64);
 // stacks to a single column below 1024. Pass either `left`/`right` or `items=[…]`.
@@ -139,6 +146,7 @@ function CaseText({ title, descriptions = [], as = "h2" }) {
     </div>
   );
 }
+
 
 // ──────────────────────────────────────────────────────────────────
 // CaseDivider — horizontal dashed divider used between major sections.
