@@ -107,6 +107,9 @@ export default async function CasePage({ params: paramsPromise }: Args) {
         relatedCasesButtonLabel={relatedCasesButtonLabel}
         relatedCasesButtonUrl={relatedCasesButtonUrl}
         caseAccessLabels={caseAccessLabels}
+        contactEmail={navData.copyEmailText}
+        copyEmailLabel={navData.copyEmailLabel}
+        copyEmailSuccess={navData.copyEmailSuccess}
       />
     </CasePageShell>
   )

@@ -231,9 +231,12 @@ interface CaseDetailContentProps {
   relatedCasesButtonLabel?: string
   relatedCasesButtonUrl?: string
   caseAccessLabels?: CaseAccessLabels
+  contactEmail?: string
+  copyEmailLabel?: string
+  copyEmailSuccess?: string
 }
 
-export async function CaseDetailContent({ caseDoc, contacts, labels, relatedCases, relatedCasesTitle, relatedCasesDescription, relatedCasesButtonLabel, relatedCasesButtonUrl, caseAccessLabels }: CaseDetailContentProps) {
+export async function CaseDetailContent({ caseDoc, contacts, labels, relatedCases, relatedCasesTitle, relatedCasesDescription, relatedCasesButtonLabel, relatedCasesButtonUrl, caseAccessLabels, contactEmail, copyEmailLabel, copyEmailSuccess }: CaseDetailContentProps) {
   const cover = typeof caseDoc.cover === 'object' ? (caseDoc.cover as Media) : null
   const tags = (caseDoc.tags as Tag[]).filter((tag): tag is Tag => typeof tag === 'object')
 
@@ -360,7 +363,12 @@ export async function CaseDetailContent({ caseDoc, contacts, labels, relatedCase
 
       <hr className="divider-solid" />
 
-      <ContactsSection data={contacts} />
+      <ContactsSection
+        data={contacts}
+        contactEmail={contactEmail}
+        copyEmailLabel={copyEmailLabel}
+        copyEmailSuccess={copyEmailSuccess}
+      />
     </div>
   )
 }

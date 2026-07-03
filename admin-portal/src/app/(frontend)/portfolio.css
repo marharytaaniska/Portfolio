@@ -287,7 +287,7 @@ main { margin-left: var(--rail-w); padding-top: var(--header-h); }
   flex-direction: column;
   animation: review-rise .15s ease both;
 }
-.review-modal-close {
+.modal-close-btn {
   all: unset;
   position: absolute;
   top: 16px; right: 16px;
@@ -299,8 +299,8 @@ main { margin-left: var(--rail-w); padding-top: var(--header-h); }
   color: var(--ink-400);
   transition: color .15s ease;
 }
-.review-modal-close svg { display: block; }
-.review-modal-close:hover { color: var(--ink-900); }
+.modal-close-btn svg { display: block; }
+.modal-close-btn:hover { color: var(--ink-900); }
 .review-modal-close-fab { display: none; }
 .review-modal-body {
   flex: 1;
@@ -350,19 +350,6 @@ main { margin-left: var(--rail-w); padding-top: var(--header-h); }
   gap: 32px;
   animation: review-rise .15s ease both;
 }
-.password-modal-close {
-  all: unset;
-  position: absolute;
-  top: 24px; right: 24px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--ink-400);
-  transition: color .15s ease;
-}
-.password-modal-close:hover { color: var(--ink-900); }
-
 /* H3 typography, capped width clears close button */
 .password-modal-title {
   margin: 0;
@@ -451,7 +438,6 @@ main { margin-left: var(--rail-w); padding-top: var(--header-h); }
 @media (max-width: 727px) {
   .password-modal                 { padding: 16px; }
   .password-modal-panel           { padding: 24px; gap: 24px; }
-  .password-modal-close           { top: 16px; right: 16px; }
   .password-modal-form            { gap: 24px; }
   .password-modal-input           { font: 400 14px/22px var(--font-body); }
   .password-modal-submit          { height: 48px !important; font: 500 14px/22px var(--font-body) !important; }
@@ -999,7 +985,7 @@ ol.case-text       { list-style-type: decimal !important; }
   .review-modal         { padding: 16px; }
   .review-modal-inner   { width: 100%; gap: 12px; }
   .review-modal-panel   { max-height: min(500px, calc(100vh - 100px)); }
-  .review-modal-close   { display: none; }
+  .review-modal-panel .modal-close-btn { display: none; }
   .review-modal-close-fab {
     display: inline-flex;
     align-items: center;

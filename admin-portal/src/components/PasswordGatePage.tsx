@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { validateCasePassword } from '@/app/actions/validateCasePassword'
 import type { CaseAccessLabels } from './PasswordModal'
+import { ModalCloseButton } from '@/components/ModalCloseButton'
 
 interface PasswordGatePageProps {
   slug: string
@@ -63,16 +64,7 @@ export function PasswordGatePage({ slug, locale, labels }: PasswordGatePageProps
   return (
     <div className="password-gate">
       <div className="password-modal-panel password-gate-panel">
-        <button
-          type="button"
-          className="password-modal-close"
-          onClick={() => router.push(`/${locale}`)}
-          aria-label="Close"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M20.7754 4.99805L13.3857 12.3877L20.5547 19.5566L19.5566 20.5547L12.3877 13.3857L5.21875 20.5547L4.2207 19.5566L11.3896 12.3877L4 4.99805L4.99805 4L12.3877 11.3896L19.7773 4L20.7754 4.99805Z" fill="currentColor" />
-          </svg>
-        </button>
+        <ModalCloseButton onClick={() => router.push(`/${locale}`)} label="Close" />
 
         <h3 className="password-modal-title">{title}</h3>
 

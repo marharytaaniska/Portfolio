@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useLocale } from 'next-intl'
 import { validateCasePassword } from '@/app/actions/validateCasePassword'
+import { ModalCloseButton } from '@/components/ModalCloseButton'
 
 export interface CaseAccessLabels {
   modalTitle?: string
@@ -96,16 +97,7 @@ export function PasswordModal({ caseSlug, onClose, labels }: PasswordModalProps)
     <div className="password-modal" role="dialog" aria-modal="true" aria-label={title}>
       <div className="password-modal-backdrop" onClick={onClose} aria-hidden="true" />
       <div className="password-modal-panel" role="document">
-        <button
-          type="button"
-          className="password-modal-close"
-          onClick={onClose}
-          aria-label="Close"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M20.7754 4.99805L13.3857 12.3877L20.5547 19.5566L19.5566 20.5547L12.3877 13.3857L5.21875 20.5547L4.2207 19.5566L11.3896 12.3877L4 4.99805L4.99805 4L12.3877 11.3896L19.7773 4L20.7754 4.99805Z" fill="currentColor" />
-          </svg>
-        </button>
+        <ModalCloseButton onClick={onClose} label="Close" />
 
         <h3 className="password-modal-title">{title}</h3>
 
