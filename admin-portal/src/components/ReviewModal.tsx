@@ -4,7 +4,7 @@ import React from 'react'
 import { useTranslations } from 'next-intl'
 import RichText from '@/components/RichText'
 import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
-import { CloseIcon, ModalCloseButton } from '@/components/ModalCloseButton'
+import { ModalCloseButton, ModalCloseFab } from '@/components/ModalCloseButton'
 
 interface ReviewData {
   quote: unknown
@@ -59,14 +59,7 @@ export function ReviewModal({ review, onClose }: ReviewModalProps) {
           </div>
         </div>
 
-        <button
-          type="button"
-          className="review-modal-close-fab"
-          onClick={onClose}
-          aria-label={t('close')}
-        >
-          <CloseIcon />
-        </button>
+        <ModalCloseFab onClick={onClose} label={t('close')} />
       </div>
     </div>
   )

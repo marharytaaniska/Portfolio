@@ -21,3 +21,11 @@ export function ModalCloseButton({ onClick, label }: ModalCloseButtonProps) {
     </button>
   )
 }
+
+export function ModalCloseFab({ onClick, label }: ModalCloseButtonProps) {
+  return (
+    <button type="button" className="modal-close-btn-fab" onClick={onClick} aria-label={label}>
+      <CloseIcon />
+    </button>
+  )
+}

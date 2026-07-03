@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useLocale } from 'next-intl'
 import { validateCasePassword } from '@/app/actions/validateCasePassword'
-import { ModalCloseButton } from '@/components/ModalCloseButton'
+import { ModalCloseButton, ModalCloseFab } from '@/components/ModalCloseButton'
 
 export interface CaseAccessLabels {
   modalTitle?: string
@@ -96,54 +96,58 @@ export function PasswordModal({ caseSlug, onClose, labels }: PasswordModalProps)
   return (
     <div className="password-modal" role="dialog" aria-modal="true" aria-label={title}>
       <div className="password-modal-backdrop" onClick={onClose} aria-hidden="true" />
-      <div className="password-modal-panel" role="document">
-        <ModalCloseButton onClick={onClose} label="Close" />
+      <div className="password-modal-inner">
+        <div className="password-modal-panel" role="document">
+          <ModalCloseButton onClick={onClose} label="Close" />
 
-        <h3 className="password-modal-title">{title}</h3>
+          <h3 className="password-modal-title">{title}</h3>
 
-        <form onSubmit={handleSubmit} className="password-modal-form">
-          <div className="password-modal-field">
-            <div className="password-modal-input-wrap">
-              <input
-                ref={inputRef}
-                type={showPassword ? 'text' : 'password'}
-                className={`password-modal-input${error ? ' password-modal-input--error' : ''}`}
-                placeholder={placeholder}
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value)
-                  setError(null)
-                }}
-                autoComplete="current-password"
-                disabled={pending}
-              />
-              {password && (
-                <button
-                  type="button"
-                  className="password-modal-eye"
-                  onClick={() => setShowPassword((v) => !v)}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  tabIndex={-1}
-                >
-                  {showPassword ? <IconVisibility /> : <IconVisibilityOff />}
-                </button>
+          <form onSubmit={handleSubmit} className="password-modal-form">
+            <div className="password-modal-field">
+              <div className="password-modal-input-wrap">
+                <input
+                  ref={inputRef}
+                  type={showPassword ? 'text' : 'password'}
+                  className={`password-modal-input${error ? ' password-modal-input--error' : ''}`}
+                  placeholder={placeholder}
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value)
+                    setError(null)
+                  }}
+                  autoComplete="current-password"
+                  disabled={pending}
+                />
+                {password && (
+                  <button
+                    type="button"
+                    className="password-modal-eye"
+                    onClick={() => setShowPassword((v) => !v)}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <IconVisibility /> : <IconVisibilityOff />}
+                  </button>
+                )}
+              </div>
+              {error && (
+                <p className="password-modal-error" role="alert">
+                  {error}
+                </p>
               )}
             </div>
-            {error && (
-              <p className="password-modal-error" role="alert">
-                {error}
-              </p>
-            )}
-          </div>
 
-          <button
-            type="submit"
-            className="btn btn-primary btn-lg password-modal-submit"
-            disabled={pending || !password}
-          >
-            {continueLabel}
-          </button>
-        </form>
+            <button
+              type="submit"
+              className="btn btn-primary btn-lg password-modal-submit"
+              disabled={pending || !password}
+            >
+              {continueLabel}
+            </button>
+          </form>
+        </div>
+
+        <ModalCloseFab onClick={onClose} label="Close" />
       </div>
     </div>
   )
