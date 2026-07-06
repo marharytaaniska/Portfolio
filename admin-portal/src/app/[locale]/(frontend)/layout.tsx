@@ -7,6 +7,7 @@ import { notFound } from 'next/navigation'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import { Analytics } from '@vercel/analytics/next'
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 import { routing } from '@/i18n/routing'
 import { Providers } from '@/providers'
@@ -58,6 +59,9 @@ export default async function LocaleLayout({ children, params }: Props) {
           </NextIntlClientProvider>
         </Providers>
         <Analytics />
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+        )}
       </body>
     </html>
   )
