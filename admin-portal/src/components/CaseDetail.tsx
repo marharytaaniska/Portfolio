@@ -6,7 +6,6 @@ import { Button } from '@/components/Button'
 import { BackButton } from '@/components/BackButton'
 import { ContactsSection } from '@/components/ContactsSection'
 import { RelatedCasesSection } from '@/components/RelatedCasesSection'
-import { CaseInteractiveVideo } from '@/components/CaseInteractiveVideo'
 import { Link } from '@/i18n/navigation'
 import type { CaseAccessLabels } from '@/components/PasswordModal'
 
@@ -151,31 +150,17 @@ function isVideo(src: string): boolean {
   return VIDEO_EXTENSIONS.some((ext) => path.endsWith(ext))
 }
 
-function CaseMedia({ src, alt, autoplay }: { src: string; alt?: string; autoplay: boolean }) {
-  if (!isVideo(src)) {
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img src={src} alt={alt ?? ''} />
-  }
-  if (autoplay) {
-    return <video src={src} autoPlay loop muted playsInline aria-label={alt} />
-  }
-  return <CaseInteractiveVideo src={src} alt={alt} />
-}
-
-function CaseSingleImage({
-  src,
-  alt,
-  autoplay = true,
-}: {
-  src?: string | null
-  alt?: string
-  autoplay?: boolean
-}) {
+function CaseSingleImage({ src, alt }: { src?: string | null; alt?: string }) {
   return (
     <figure className="case-img-single">
       <div className="case-img-frame" role="img" aria-label={alt ?? 'image'}>
         {src ? (
-          <CaseMedia src={src} alt={alt} autoplay={autoplay} />
+          isVideo(src) ? (
+            <video src={src} autoPlay loop muted playsInline />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={src} alt={alt ?? ''} />
+          )
         ) : (
           <span className="case-img-placeholder">{alt ?? 'image'}</span>
         )}
@@ -184,20 +169,21 @@ function CaseSingleImage({
   )
 }
 
-function CaseDoubleImage({
-  images,
-}: {
-  images: Array<{ src?: string | null; alt?: string; autoplay?: boolean }>
-}) {
+function CaseDoubleImage({ images }: { images: Array<{ src?: string | null; alt?: string }> }) {
   return (
     <figure className="case-img-double">
       {images.slice(0, 2).map((it, i) => (
         <div key={i} className="case-img-frame" role="img" aria-label={it.alt ?? 'image'}>
           {it.src ? (
-            <CaseMedia src={it.src} alt={it.alt} autoplay={it.autoplay ?? true} />
+          isVideo(it.src) ? (
+            <video src={it.src} autoPlay loop muted playsInline />
           ) : (
-            <span className="case-img-placeholder">{it.alt ?? 'image'}</span>
-          )}
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={it.src} alt={it.alt ?? ''} />
+          )
+        ) : (
+          <span className="case-img-placeholder">{it.alt ?? 'image'}</span>
+        )}
         </div>
       ))}
     </figure>
@@ -272,11 +258,7 @@ export async function CaseDetailContent({ caseDoc, contacts, labels, relatedCase
         <CaseSummary items={summaryItems} />
 
         {cover?.url && (
-          <CaseSingleImage
-            src={getMediaUrl(cover.url)}
-            alt={cover.alt ?? caseDoc.title}
-            autoplay={caseDoc.cover_autoplay ?? true}
-          />
+          <CaseSingleImage src={getMediaUrl(cover.url)} alt={cover.alt ?? caseDoc.title} />
         )}
 
         {caseDoc.content_blocks.map((block, i) => {
@@ -299,19 +281,11 @@ export async function CaseDetailContent({ caseDoc, contacts, labels, relatedCase
               return {
                 src: media?.url ? getMediaUrl(media.url) : null,
                 alt: media?.alt ?? block.caption ?? '',
-                autoplay: item.autoplay ?? true,
               }
             })
             if (imgs.length === 0) return null
             if (imgs.length === 1) {
-              return (
-                <CaseSingleImage
-                  key={i}
-                  src={imgs[0].src}
-                  alt={imgs[0].alt}
-                  autoplay={imgs[0].autoplay}
-                />
-              )
+              return <CaseSingleImage key={i} src={imgs[0].src} alt={imgs[0].alt} />
             }
             return <CaseDoubleImage key={i} images={imgs} />
           }

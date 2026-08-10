@@ -776,107 +776,10 @@ button.exp-expand-btn:hover { color: var(--accent); }
   width: 100%;
   background: var(--ink-100);
 }
-.case-img-frame img,
-.case-img-frame video {
+.case-img-frame img {
   display: block;
   width: 100%;
   height: auto;
-}
-
-/* Interactive (click-to-play) video */
-.case-video-frame {
-  position: relative;
-  cursor: pointer;
-  line-height: 0;
-}
-.case-video-frame video {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-.case-video-poster {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(13, 30, 44, 0.25);
-}
-.case-video-play-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: var(--white);
-  color: var(--ink-900);
-  transform: translateX(2px);
-}
-.case-video-controls {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 16px;
-  background: linear-gradient(to top, rgba(13, 30, 44, 0.85), rgba(13, 30, 44, 0));
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.15s ease;
-  cursor: default;
-}
-.case-video-frame:hover .case-video-controls,
-.case-video-frame:not(.is-playing) .case-video-controls {
-  opacity: 1;
-  pointer-events: auto;
-}
-.case-video-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  flex-shrink: 0;
-  border: none;
-  background: transparent;
-  color: var(--white);
-  cursor: pointer;
-  padding: 0;
-}
-.case-video-time {
-  font: 400 12px/1 ui-monospace, Menlo, monospace;
-  color: var(--white);
-  flex-shrink: 0;
-  min-width: 32px;
-  text-align: center;
-}
-.case-video-progress {
-  flex: 1;
-  height: 4px;
-  appearance: none;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 2px;
-  cursor: pointer;
-  accent-color: var(--accent);
-}
-.case-video-progress::-webkit-slider-thumb {
-  appearance: none;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--white);
-  cursor: pointer;
-}
-.case-video-progress::-moz-range-thumb {
-  width: 12px;
-  height: 12px;
-  border: none;
-  border-radius: 50%;
-  background: var(--white);
-  cursor: pointer;
 }
 .case-img-placeholder {
   display: flex;

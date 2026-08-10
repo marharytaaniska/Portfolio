@@ -334,10 +334,6 @@ export interface Case {
    */
   slug: string;
   cover: number | Media;
-  /**
-   * Включено: видео зациклено играет само, без звука. Выключено: видео запускается по клику, со звуком и элементами управления. Не влияет на изображения.
-   */
-  cover_autoplay?: boolean | null;
   client?: string | null;
   tags: (number | Tag)[];
   niche: string;
@@ -399,10 +395,6 @@ export interface Case {
         images?:
           | {
               image?: (number | null) | Media;
-              /**
-               * Включено: видео зациклено играет само, без звука. Выключено: видео запускается по клику, со звуком и элементами управления. Не влияет на изображения.
-               */
-              autoplay?: boolean | null;
               id?: string | null;
             }[]
           | null;
@@ -740,7 +732,6 @@ export interface CasesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
   cover?: T;
-  cover_autoplay?: T;
   client?: T;
   tags?: T;
   niche?: T;
@@ -774,7 +765,6 @@ export interface CasesSelect<T extends boolean = true> {
                 | T
                 | {
                     image?: T;
-                    autoplay?: T;
                     id?: T;
                   };
               caption?: T;
