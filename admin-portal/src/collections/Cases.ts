@@ -73,6 +73,26 @@ export const Cases: CollectionConfig = {
       label: 'Обложка (фото или видео)',
       required: true,
     },
+    {
+      name: 'cover_autoplay',
+      type: 'checkbox',
+      label: 'Автовоспроизведение обложки-видео',
+      defaultValue: true,
+      admin: {
+        description:
+          'Включено: видео зациклено играет само, без звука. Выключено: видео запускается по клику, со звуком и элементами управления. Не влияет на изображения.',
+      },
+    },
+    {
+      name: 'hide_cover',
+      type: 'checkbox',
+      label: 'Скрыть обложку на странице кейса',
+      defaultValue: false,
+      admin: {
+        description:
+          'Обложка всё равно используется как превью кейса в списках и для соцсетей, но не показывается вверху страницы кейса.',
+      },
+    },
 
     // ── Client ────────────────────────────────────────────────
     {
@@ -209,6 +229,16 @@ export const Cases: CollectionConfig = {
                   type: 'upload',
                   relationTo: 'media',
                   label: 'Изображение',
+                },
+                {
+                  name: 'autoplay',
+                  type: 'checkbox',
+                  label: 'Автовоспроизведение (только для видео)',
+                  defaultValue: true,
+                  admin: {
+                    description:
+                      'Включено: видео зациклено играет само, без звука. Выключено: видео запускается по клику, со звуком и элементами управления. Не влияет на изображения.',
+                  },
                 },
               ],
             },
