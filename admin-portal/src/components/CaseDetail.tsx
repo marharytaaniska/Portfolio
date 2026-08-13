@@ -271,7 +271,7 @@ export async function CaseDetailContent({ caseDoc, contacts, labels, relatedCase
 
         <CaseSummary items={summaryItems} />
 
-        {cover?.url && (
+        {cover?.url && !caseDoc.hide_cover && (
           <CaseSingleImage
             src={getMediaUrl(cover.url)}
             alt={cover.alt ?? caseDoc.title}

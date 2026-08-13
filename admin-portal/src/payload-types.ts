@@ -338,6 +338,10 @@ export interface Case {
    * Включено: видео зациклено играет само, без звука. Выключено: видео запускается по клику, со звуком и элементами управления. Не влияет на изображения.
    */
   cover_autoplay?: boolean | null;
+  /**
+   * Обложка всё равно используется как превью кейса в списках и для соцсетей, но не показывается вверху страницы кейса.
+   */
+  hide_cover?: boolean | null;
   client?: string | null;
   tags: (number | Tag)[];
   niche: string;
@@ -741,6 +745,7 @@ export interface CasesSelect<T extends boolean = true> {
   slug?: T;
   cover?: T;
   cover_autoplay?: T;
+  hide_cover?: T;
   client?: T;
   tags?: T;
   niche?: T;
