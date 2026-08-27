@@ -24,6 +24,7 @@ export const Testimonials: CollectionConfig = {
       type: 'text',
       label: 'Имя автора',
       required: true,
+      localized: true,
     },
     {
       name: 'author_description',
