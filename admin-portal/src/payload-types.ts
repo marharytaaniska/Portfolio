@@ -106,6 +106,7 @@ export interface Config {
     hero: Hero;
     'relevant-cases-section': RelevantCasesSection;
     'testimonials-section': TestimonialsSection;
+    'kufar-reviews-section': KufarReviewsSection;
     background: Background;
     'experience-section': ExperienceSection;
     contacts: Contact;
@@ -119,6 +120,7 @@ export interface Config {
     hero: HeroSelect<false> | HeroSelect<true>;
     'relevant-cases-section': RelevantCasesSectionSelect<false> | RelevantCasesSectionSelect<true>;
     'testimonials-section': TestimonialsSectionSelect<false> | TestimonialsSectionSelect<true>;
+    'kufar-reviews-section': KufarReviewsSectionSelect<false> | KufarReviewsSectionSelect<true>;
     background: BackgroundSelect<false> | BackgroundSelect<true>;
     'experience-section': ExperienceSectionSelect<false> | ExperienceSectionSelect<true>;
     contacts: ContactsSelect<false> | ContactsSelect<true>;
@@ -993,6 +995,32 @@ export interface TestimonialsSection {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "kufar-reviews-section".
+ */
+export interface KufarReviewsSection {
+  id: number;
+  /**
+   * Show this section on the website
+   */
+  enabled?: boolean | null;
+  /**
+   * Пока плейсхолдер, позже заменить на настоящий логотип
+   */
+  logo?: (number | null) | Media;
+  heading?: string | null;
+  description?: string | null;
+  rating_image?: (number | null) | Media;
+  reviews?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "background".
  */
 export interface Background {
@@ -1304,6 +1332,26 @@ export interface TestimonialsSectionSelect<T extends boolean = true> {
   section_title?: T;
   read_more_label?: T;
   section_content?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "kufar-reviews-section_select".
+ */
+export interface KufarReviewsSectionSelect<T extends boolean = true> {
+  enabled?: T;
+  logo?: T;
+  heading?: T;
+  description?: T;
+  rating_image?: T;
+  reviews?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

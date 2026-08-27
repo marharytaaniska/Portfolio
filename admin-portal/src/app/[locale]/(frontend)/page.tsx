@@ -12,6 +12,7 @@ import type { NavData } from './page.client'
 import { HeroSection } from '@/components/HeroSection'
 import { CasesSection } from '@/components/CasesSection'
 import { TestimonialsSection } from '@/components/TestimonialsSection'
+import { KufarReviewsSection } from '@/components/KufarReviewsSection'
 import { BackgroundSection } from '@/components/BackgroundSection'
 import { ExperienceSection } from '@/components/ExperienceSection'
 import { ContactsSection } from '@/components/ContactsSection'
@@ -59,6 +60,7 @@ export default async function HomePage({ params: paramsPromise }: Args) {
   const [
     hero,
     testimonialsSection,
+    kufarReviewsSection,
     background,
     contacts,
     experienceSection,
@@ -68,6 +70,7 @@ export default async function HomePage({ params: paramsPromise }: Args) {
   ] = await Promise.all([
     payload.findGlobal({ slug: 'hero', depth: 2, locale: loc }),
     payload.findGlobal({ slug: 'testimonials-section', locale: loc }),
+    payload.findGlobal({ slug: 'kufar-reviews-section', depth: 2, locale: loc }),
     payload.findGlobal({ slug: 'background', depth: 2, locale: loc }),
     payload.findGlobal({ slug: 'contacts', locale: loc }),
     payload.findGlobal({ slug: 'experience-section', locale: loc }),
@@ -144,6 +147,10 @@ export default async function HomePage({ params: paramsPromise }: Args) {
     )
   }
 
+  if ((kufarReviewsSection as any).enabled !== false) {
+    sections.push(<KufarReviewsSection key="kufar-reviews" data={kufarReviewsSection} />)
+  }
+
   if ((background as any).enabled !== false) {
     sections.push(<BackgroundSection key="background" background={background} />)
   }
@@ -178,12 +185,16 @@ export default async function HomePage({ params: paramsPromise }: Args) {
 
   return (
     <PageShell navData={navData}>
-      {sections.map((section, i) => (
-        <React.Fragment key={i}>
-          {i > 0 && <hr className="divider-solid" />}
-          {section}
-        </React.Fragment>
-      ))}
+      {sections.map((section, i) => {
+        const key = (section as React.ReactElement).key
+        const skipDivider = key === 'kufar-reviews'
+        return (
+          <React.Fragment key={i}>
+            {i > 0 && !skipDivider && <hr className="divider-solid" />}
+            {section}
+          </React.Fragment>
+        )
+      })}
     </PageShell>
   )
 }

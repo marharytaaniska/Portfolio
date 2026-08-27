@@ -253,6 +253,73 @@ main { margin-left: var(--rail-w); padding-top: var(--header-h); }
 }
 .review-readmore:hover { color: var(--accent); }
 
+/* ── Kufar reviews section ───────────────────────────────── */
+.kufar-panel {
+  background: #00A66C;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  box-sizing: border-box;
+}
+.kufar-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 48px;
+}
+.kufar-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  max-width: 800px;
+}
+.kufar-copy { display: flex; flex-direction: column; gap: 24px; }
+.kufar-logo { display: flex; align-items: center; height: 40px; }
+.kufar-logo img { display: block; height: 100%; width: auto; }
+.kufar-logo-placeholder {
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 16px;
+  border: 1px dashed rgba(255,255,255,.5);
+  border-radius: 8px;
+  font: 500 14px/1 var(--font-body);
+  letter-spacing: .04em;
+  color: var(--white);
+}
+.kufar-heading {
+  margin: 0;
+  font: 400 30px/36px var(--font-display);
+  color: var(--white);
+  letter-spacing: -0.01em;
+}
+.kufar-description {
+  margin: 0;
+  font: 400 18px/26px var(--font-body);
+  color: var(--white);
+}
+.kufar-rating {
+  display: block;
+  width: 100%;
+  max-width: 360px;
+  height: auto;
+  flex-shrink: 0;
+  border-radius: 16px;
+}
+.kufar-reviews {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.kufar-review-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 16px;
+}
+
 /* ── Review modal ────────────────────────────────────────── */
 /* Desktop: × inside panel top-right. Mobile: circular FAB below panel. */
 .review-modal {
@@ -1151,6 +1218,17 @@ ol.case-text       { list-style-type: decimal !important; }
   .reviews-footer { order: 1; display: flex; justify-content: flex-start; text-align: left; flex-wrap: wrap; gap: 8px; }
   .reviews-viewport { order: 2; }
   .reviews-arrows { order: 3; display: flex; justify-content: flex-start; gap: 12px; }
+
+  /* Kufar reviews section — stack, tighter padding */
+  .kufar-panel { padding: 24px; gap: 32px; }
+  .kufar-header { flex-direction: column; gap: 32px; }
+  .kufar-logo { height: 27px; }
+  .kufar-copy { gap: 20px; }
+  .kufar-heading { font: 400 20px/24px var(--font-display) !important; }
+  .kufar-description { font: 400 14px/22px var(--font-body) !important; }
+  .kufar-rating { max-width: 280px; }
+  .kufar-reviews { grid-template-columns: 1fr; gap: 12px; }
+  .kufar-review-img { max-width: 320px; }
 
   /* Review modal — mobile: FAB outside panel, tighter padding */
   .review-modal         { padding: 16px; }

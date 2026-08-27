@@ -21,6 +21,7 @@ import { Header } from './Header/config'
 import { HeroGlobal } from './collections/HeroGlobal'
 import { RelevantCasesGlobal } from './collections/RelevantCasesGlobal'
 import { TestimonialsGlobal } from './collections/TestimonialsGlobal'
+import { KufarReviewsGlobal } from './collections/KufarReviewsGlobal'
 import { BackgroundGlobal } from './collections/BackgroundGlobal'
 import { ContactsGlobal } from './collections/ContactsGlobal'
 import { ExperienceGlobal } from './collections/ExperienceGlobal'
@@ -100,6 +101,7 @@ export default buildConfig({
     HeroGlobal,
     RelevantCasesGlobal,
     TestimonialsGlobal,
+    KufarReviewsGlobal,
     BackgroundGlobal,
     ExperienceGlobal,
     ContactsGlobal,
